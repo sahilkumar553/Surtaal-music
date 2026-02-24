@@ -35,31 +35,31 @@ export function StudentsPerformance() {
     stage: [
       {
         title: "Annual Function 2025",
-        image: "/public/image/IMG-20250810-WA0083.jpg.jpeg",
+        image: "/image/IMG-20250810-WA0083.jpg.jpeg",
         description: "Classical Song Performance",
       },
       {
         title: "Vocal Music Recital",
-        image: "/public/image/WhatsApp Image 2026-02-23 at 10.02.16 PM.jpeg",
+        image: "/image/WhatsApp Image 2026-02-23 at 10.02.16 PM.jpeg",
         description: "Group vocal performance",
       },
       {
         title: "Solo Singing",
-        image: "/public/image/IMG-20250824-WA0010.jpg.jpeg",
+        image: "/image/IMG-20250824-WA0010.jpg.jpeg",
         description: "Advanced Recording performance",
       },
     ],
     competition: [
       {
         title: "District Music Competition 2025",
-        image: "/public/image/WhatsApp Image 2026-02-23 at 10.02.10 PM.jpeg",
+        image: "/image/WhatsApp Image 2026-02-23 at 10.02.10 PM.jpeg",
         description: "Multiple students won prizes",
       },
     ],
     achievements: [
       {
         title: "Meeting with the Mithu Sir",
-        image: "/public/image/IMG-20250813-WA0030.jpg.jpeg",
+        image: "/image/IMG-20250813-WA0030.jpg.jpeg",
         description: "Meeting with the Mithu Sir",
       },
     ],

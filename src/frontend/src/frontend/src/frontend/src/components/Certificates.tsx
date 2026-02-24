@@ -27,12 +27,12 @@ export function Certificates() {
     {
       title: "Certificate Of Affiliation",
       subtitle: "Surobharati Sangeet Kala Kendra, Kolkata",
-      image: "/public/image/Certificate.jpg",
+      image: "/image/Certificate.jpg",
     },
     {
       title: "Certificate Of Achievement",
       subtitle: "Annual recognition and merit awards",
-      image: "/public/image/WhatsApp Image 2025-04-18 at 15.33.36_09d227d1.jpg.jpeg",
+      image: "/image/WhatsApp Image 2025-04-18 at 15.33.36_09d227d1.jpg.jpeg",
     },
   ];
 
