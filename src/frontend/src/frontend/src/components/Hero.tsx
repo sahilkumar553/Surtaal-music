@@ -1,0 +1,92 @@
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Music, Sparkles } from "lucide-react";
+
+export function Hero() {
+  const navigate = useNavigate();
+
+  return (
+    <section 
+      id="hero" 
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+    >
+      {/* Background Image with Overlay */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="\image\Classic_music.jpg"
+          alt="Students performing"
+          className="w-full h-full object-cover opacity-40 blur-[-2px] scale-105"
+        />
+        <div className="absolute inset-0 gradient-overlay"></div>
+      </div>
+
+      {/* Ornamental Corner Accents */}
+      <div className="absolute top-0 left-0 w-32 h-32 border-t-2 border-l-2 border-primary/40 pointer-events-none"></div>
+      <div className="absolute top-0 right-0 w-32 h-32 border-t-2 border-r-2 border-primary/40 pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 w-32 h-32 border-b-2 border-l-2 border-primary/40 pointer-events-none"></div>
+      <div className="absolute bottom-0 right-0 w-32 h-32 border-b-2 border-r-2 border-primary/40 pointer-events-none"></div>
+
+      {/* Content */}
+      <div className="relative z-10 container mx-auto px-4 py-24 text-center">
+        <div className="max-w-4xl mx-auto space-y-8">
+          {/* Decorative Icon */}
+          <div className="flex justify-center animate-fade-in-up stagger-1">
+            <div className="p-4 bg-primary/10 rounded-full border border-primary/30 shadow-gold">
+              <Music className="w-12 h-12 text-primary animate-shimmer" />
+            </div>
+          </div>
+
+          {/* Main Heading */}
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-foreground leading-tight animate-fade-in-up stagger-2">
+            <span className="block text-primary">Sur Taal</span>
+            <span className="block">Sangeet Academy</span>
+          </h1>
+
+          {/* Tagline */}
+          <p className="text-2xl md:text-3xl font-serif italic text-primary/90 animate-fade-in-up stagger-3">
+            Where Talent Gets Its True Rhythm
+          </p>
+
+          {/* Subheading */}
+          <p className="text-lg md:text-xl text-foreground/80 max-w-2xl mx-auto animate-fade-in-up stagger-4">
+            Certified Music & Dance Training in Gaya
+          </p>
+
+          {/* Decorative Divider */}
+          <div className="flex items-center justify-center gap-4 py-4 animate-fade-in-up stagger-5">
+            <div className="h-px w-20 bg-gradient-to-r from-transparent via-primary to-transparent"></div>
+            <Sparkles className="w-5 h-5 text-primary animate-shimmer" />
+            <div className="h-px w-20 bg-gradient-to-r from-transparent via-primary to-transparent"></div>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up stagger-6">
+            <Button
+              size="lg"
+              onClick={() => navigate("/admissions")}
+              className="bg-primary text-primary-foreground hover:bg-accent text-lg px-8 py-6 shadow-gold-lg transition-all hover:scale-105"
+            >
+              Enroll Now
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => navigate("/contact")}
+              className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground text-lg px-8 py-6 transition-all hover:scale-105"
+            >
+              Book Free Demo
+            </Button>
+          </div>
+
+          {/* Additional Info */}
+          <p className="text-sm text-foreground/60 animate-fade-in-up stagger-6">
+            Affiliated with Surobharati Sangeet Kala Kendra, Kolkata
+          </p>
+        </div>
+      </div>
+
+      {/* Bottom Fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-10"></div>
+    </section>
+  );
+}

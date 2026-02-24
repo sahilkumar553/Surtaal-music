@@ -1,7 +1,11 @@
 .env
+<<<<<<< HEAD
 .env.*
 !.env.example
 
 node_modules
 dist
 .vite
+=======
+pnpm-lock.yaml
+>>>>>>> b982a34fa121bf18b2801f64acfd4ebfe6ae7d25

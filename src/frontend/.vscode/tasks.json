@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run app",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"--dir",
+				"src/frontend",
+				"start"
+			],
+			"isBackground": true
+		}
+	]
+}
