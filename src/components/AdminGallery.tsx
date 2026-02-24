@@ -132,7 +132,7 @@ export function AdminGallery() {
 
               <div className="space-y-2">
                 <Label htmlFor="category">Category</Label>
-                <Select value={category} onValueChange={setCategory}>
+                <Select value={category} onValueChange={(value) => setCategory(value as MediaCategory)}>
                   <SelectTrigger id="category">
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>

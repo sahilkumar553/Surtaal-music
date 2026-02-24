@@ -35,37 +35,37 @@ export function Gallery() {
 
   const staticItems = [
     {
-      image: "/public/image/IMG-20250824-WA0007.jpg.jpeg",
+      image: "/image/IMG-20250824-WA0007.jpg.jpeg",
       title: "Class Sessions",
       subtitle: "Daily Music & Dance Classes",
     },
     {
-      image: "/public/image/IMG-20250810-WA0083.jpg.jpeg",
+      image: "/image/IMG-20250810-WA0083.jpg.jpeg",
       title: "Stage Events",
       subtitle: "Annual Function Highlights",
     },
     {
-      image: "/public/image/IMG-20250824-WA0010.jpg.jpeg",
+      image: "/image/IMG-20250824-WA0010.jpg.jpeg",
       title: "Song Recording",
       subtitle: "Song Recording Session",
     },
     {
-      image: "/public/image/IMG-20250824-WA0005.jpg.jpeg",
+      image: "/image/IMG-20250824-WA0005.jpg.jpeg",
       title: "Students Performance",
       subtitle: "Confidence Through Creativity",
     },
     {
-      image: "/public/image/IMG-20250204-WA0030.jpg.jpeg",
+      image: "/image/IMG-20250204-WA0030.jpg.jpeg",
       title: "Group Photo",
       subtitle: "Our Team",
     },
     {
-      image: "/public/image/IMG-20250824-WA0008.jpg.jpeg",
+      image: "/image/IMG-20250824-WA0008.jpg.jpeg",
       title: "Shooting for Youtube",
       subtitle: "Youtube Channel",
     },
     {
-      image: "/public/image/IMG-20250204-WA0040.jpg.jpeg",
+      image: "/image/IMG-20250204-WA0040.jpg.jpeg",
       title: "Instrument Worship",
       subtitle: "Instrument Worship Session",
     },
