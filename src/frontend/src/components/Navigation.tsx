@@ -45,7 +45,7 @@ export function Navigation() {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-primary/20">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white backdrop-blur-md border-b border-primary/20">
       <nav className="container mx-auto px-2 sm:px-3 py-2 sm:py-3 flex items-center justify-between">
         {/* Logo */}
         <button 
@@ -120,26 +120,20 @@ export function Navigation() {
             <>
               <Button
                 onClick={() => navigateAndClose("/login")}
-                variant="outline"
-                className="border-primary text-primary hover:bg-primary/10 h-7 text-xs px-2"
+                className="bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-full shadow-lg hover:from-accent hover:to-primary transition-all duration-200 h-8 text-sm px-5 border-2 border-primary"
               >
                 Login
               </Button>
               <Button
                 onClick={() => navigateAndClose("/signup")}
-                className="bg-primary text-primary-foreground hover:bg-accent shadow-gold h-7 text-xs px-2"
+                className="bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-full shadow-lg hover:from-accent hover:to-primary transition-all duration-200 h-8 text-sm px-5 border-2 border-primary ml-2"
               >
                 Sign Up
               </Button>
             </>
           )}
 
-          <Button 
-            onClick={() => navigateAndClose("/admissions")}
-            className="bg-primary text-primary-foreground hover:bg-accent shadow-gold h-7 text-xs px-2"
-          >
-            Enroll
-          </Button>
+          {/* Enroll button removed as requested */}
         </div>
 
         {/* Mobile Menu Button */}

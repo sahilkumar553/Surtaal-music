@@ -29,7 +29,6 @@ function HomePage() {
       <Hero />
       <About preview />
       <Courses />
-      <StudentsPerformance />
       <Competitions />
       <Gallery />
       <Certificates />
