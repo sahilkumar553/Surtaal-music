@@ -1,43 +1,31 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Music } from "lucide-react";
 
 export function Courses() {
   const courses = [
     {
       name: "Vocal",
-      category: "Music",
-      image: "https://images.unsplash.com/photo-1511379938547-c1f69b13d835?auto=format&fit=crop&w=1200&q=80",
+      image: "https://www.musicclassonline.in/images/img/music13.jpg",
     },
     {
       name: "Tabla",
-      category: "Music",
-      image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1200&q=80",
+      image: "https://i.pinimg.com/736x/66/05/01/660501a5857ed3601bb2a50ba2433bbe.jpg",
     },
     {
       name: "Harmonium",
-      category: "Music",
-      image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1200&q=80",
+      image: "https://i.pinimg.com/736x/92/2b/9c/922b9cf3074cd1d2c45f0e392bc391bf.jpg",
     },
     {
       name: "Guitar",
-      category: "Music",
-      image: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?auto=format&fit=crop&w=1200&q=80",
+      image: "https://i.pinimg.com/1200x/c7/11/67/c7116760013e63d865fa6ec55a66b324.jpg",
     },
     {
       name: "Keyboard",
-      category: "Music",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1200&q=80",
-    },
-    {
-      name: "Classical Dance",
-      category: "Dance",
-      image: "https://images.unsplash.com/photo-1508853096304-f46e2b2a1e3e?auto=format&fit=crop&w=1200&q=80",
+      image: "https://i.pinimg.com/736x/ea/95/0b/ea950b6b4127b3cc9aef5815eaf2a8bb.jpg",
     },
     {
       name: "Bollywood Dance",
-      category: "Dance",
-      image: "https://images.unsplash.com/photo-1504809369436-c8da1df4251b?auto=format&fit=crop&w=1200&q=80",
+      image: "https://thumbs.dreamstime.com/b/indian-bollywood-couple-dancing-vector-dancers-silhouette-cartoon-dancer-people-white-64896102.jpg?w=768",
     },
   ];
 
@@ -66,22 +54,16 @@ export function Courses() {
                 return (
                   <Card 
                     key={index}
-                    className="bg-card/50 border-primary/20 hover:border-primary/50 shadow-gold hover:shadow-gold-lg transition-all hover:-translate-y-2 group flex-shrink-0 w-56 sm:w-64"
+                    style={{ backgroundImage: `url(${course.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                    className="relative border-primary/20 hover:border-primary/50 shadow-gold hover:shadow-gold-lg transition-all hover:-translate-y-2 group flex-shrink-0 w-72 sm:w-96 h-64 sm:h-80"
                   >
-                    <div className="relative overflow-hidden aspect-video border-b border-primary/20">
-                      <img
-                        src={course.image}
-                        alt={course.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
-                    <CardContent className="p-3 sm:p-4 text-center">
-                      <h4 className="text-sm sm:text-base font-serif font-bold text-foreground mb-2">
-                        {course.name}
-                      </h4>
-                      <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30 text-xs">
-                        {course.category}
-                      </Badge>
+                    <CardContent className="relative p-6 sm:p-8 text-center z-10 flex flex-col justify-center h-full">
+                      {/* No category property, so Badge removed */}
+                      <div className="absolute bottom-4 left-0 w-full flex justify-center">
+                        <h4 className="text-lg sm:text-xl font-serif font-bold text-black drop-shadow-md bg-white/80 px-3 py-1 rounded">
+                          {course.name}
+                        </h4>
+                      </div>
                     </CardContent>
                   </Card>
                 );
@@ -95,22 +77,16 @@ export function Courses() {
               return (
                 <Card 
                   key={index}
-                  className="bg-card/50 border-primary/20 hover:border-primary/50 shadow-gold hover:shadow-gold-lg transition-all hover:-translate-y-2 group"
+                  style={{ backgroundImage: `url(${course.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                  className="relative border-primary/20 hover:border-primary/50 shadow-gold hover:shadow-gold-lg transition-all hover:-translate-y-2 group h-72 md:h-96"
                 >
-                  <div className="relative overflow-hidden aspect-video border-b border-primary/20">
-                    <img
-                      src={course.image}
-                      alt={course.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                  <CardContent className="p-4 sm:p-6 md:p-8 text-center">
-                    <h4 className="text-base sm:text-lg md:text-xl font-serif font-bold text-foreground mb-2">
-                      {course.name}
-                    </h4>
-                    <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30 mt-4">
-                      {course.category}
-                    </Badge>
+                  <CardContent className="relative p-8 sm:p-10 md:p-12 text-center z-10 flex flex-col justify-center h-full">
+                    {/* No category property, so Badge removed */}
+                    <div className="absolute bottom-8 left-0 w-full flex justify-center">
+                      <h4 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-black drop-shadow-md bg-white/80 px-4 py-2 rounded">
+                        {course.name}
+                      </h4>
+                    </div>
                   </CardContent>
                 </Card>
               );

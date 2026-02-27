@@ -5,19 +5,19 @@ import { Star } from "lucide-react";
 export function Testimonials() {
   const testimonials = [
     {
-      name: "Parent Testimonial",
+      name: "Dr Ram Lakhan",
       course: "Music Program",
       rating: 5,
       text: "Best music academy in Gaya!",
     },
     {
-      name: "Parent Testimonial",
+      name: "Sunil Kumar Gupta",
       course: "Stage Performance",
-      rating: 5,
+      rating: 4.5,
       text: "My child gained confidence and stage presence.",
     },
     {
-      name: "Student Testimonial",
+      name: "Harsh Modi",
       course: "Academy Experience",
       rating: 5,
       text: "Professional and disciplined environment.",

@@ -37,6 +37,9 @@ export function Navigation() {
     { label: "Certificates", path: "/certificates" as const },
     { label: "Admissions", path: "/admissions" as const },
     { label: "Contact", path: "/contact" as const },
+  ];
+
+  const adminItems = [
     { label: "Admin", path: "/admin" as const },
     { label: "Admin: Competitions", path: "/admin/competitions" as const },
   ];
@@ -76,6 +79,24 @@ export function Navigation() {
               {item.label}
             </NavLink>
           ))}
+          {user && user.isAdmin &&
+            adminItems.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className={({ isActive }) =>
+                  `text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
+                    isActive ? "text-primary" : "text-foreground/80 hover:text-primary"
+                  }`
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
 
           {/* Auth Buttons */}
           {user ? (
@@ -148,6 +169,20 @@ export function Navigation() {
                 {item.label}
               </button>
             ))}
+            {user && user.isAdmin &&
+              adminItems.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => navigateAndClose(item.path)}
+                  className={`text-left transition-colors py-2 text-sm ${
+                    location.pathname === item.path
+                      ? "text-primary"
+                      : "text-foreground/80 hover:text-primary"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
 
             {/* Mobile Auth Section */}
             <div className="border-t border-primary/20 pt-3 mt-3">

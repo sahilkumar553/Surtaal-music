@@ -1,4 +1,5 @@
 export const AUTH_STORAGE_KEY = "surtaal-auth-user";
+export const ADMIN_EMAIL = "surtaalsangeet9270@gmail.com";
 
 export type User = {
   id: string;
@@ -7,6 +8,7 @@ export type User = {
   phone?: string;
   course?: string;
   createdAt: number;
+  isAdmin?: boolean;
 };
 
 type StoredUser = Partial<User> & {
@@ -25,10 +27,17 @@ export function getCurrentUser(): User | null {
   if (!raw) return null;
 
   try {
-    return JSON.parse(raw) as User;
+    const user = JSON.parse(raw) as User;
+    user.isAdmin = user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+    return user;
   } catch {
     return null;
   }
+}
+
+export function isAdmin(user: User | null): boolean {
+  if (!user) return false;
+  return user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
 }
 
 export function signup(input: {
@@ -88,6 +97,7 @@ export function login(email: string, password: string): User {
     phone: user.phone,
     course: user.course,
     createdAt: user.createdAt!,
+    isAdmin: user.email!.toLowerCase() === ADMIN_EMAIL.toLowerCase(),
   };
 
   saveUser(loggedInUser);
