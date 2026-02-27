@@ -21,13 +21,13 @@ export function Hero() {
       </div>
 
       {/* Ornamental Corner Accents */}
-      <div className="absolute top-0 left-0 w-32 h-32 border-t-2 border-l-2 border-primary/40 pointer-events-none"></div>
-      <div className="absolute top-0 right-0 w-32 h-32 border-t-2 border-r-2 border-primary/40 pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-32 h-32 border-b-2 border-l-2 border-primary/40 pointer-events-none"></div>
-      <div className="absolute bottom-0 right-0 w-32 h-32 border-b-2 border-r-2 border-primary/40 pointer-events-none"></div>
+      <div className="hidden sm:block absolute top-0 left-0 w-16 sm:w-24 md:w-32 h-16 sm:h-24 md:h-32 border-t-2 border-l-2 border-primary/40 pointer-events-none"></div>
+      <div className="hidden sm:block absolute top-0 right-0 w-16 sm:w-24 md:w-32 h-16 sm:h-24 md:h-32 border-t-2 border-r-2 border-primary/40 pointer-events-none"></div>
+      <div className="hidden sm:block absolute bottom-0 left-0 w-16 sm:w-24 md:w-32 h-16 sm:h-24 md:h-32 border-b-2 border-l-2 border-primary/40 pointer-events-none"></div>
+      <div className="hidden sm:block absolute bottom-0 right-0 w-16 sm:w-24 md:w-32 h-16 sm:h-24 md:h-32 border-b-2 border-r-2 border-primary/40 pointer-events-none"></div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 py-24 text-center">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 py-12 sm:py-20 md:py-24 text-center">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Decorative Icon */}
           <div className="flex justify-center animate-fade-in-up stagger-1">
@@ -37,18 +37,18 @@ export function Hero() {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-foreground leading-tight animate-fade-in-up stagger-2">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-serif font-bold text-foreground leading-tight animate-fade-in-up stagger-2">
             <span className="block text-primary">Sur Taal</span>
             <span className="block">Sangeet Academy</span>
           </h1>
 
           {/* Tagline */}
-          <p className="text-2xl md:text-3xl font-serif italic text-primary/90 animate-fade-in-up stagger-3">
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-serif italic text-primary/90 animate-fade-in-up stagger-3">
             Where Talent Gets Its True Rhythm
           </p>
 
           {/* Subheading */}
-          <p className="text-lg md:text-xl text-foreground/80 max-w-2xl mx-auto animate-fade-in-up stagger-4">
+          <p className="text-base sm:text-lg md:text-xl text-foreground/80 max-w-2xl mx-auto animate-fade-in-up stagger-4">
             Certified Music & Dance Training in Gaya
           </p>
 
@@ -60,11 +60,11 @@ export function Hero() {
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up stagger-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 animate-fade-in-up stagger-6">
             <Button
               size="lg"
               onClick={() => navigate("/admissions")}
-              className="bg-primary text-primary-foreground hover:bg-accent text-lg px-8 py-6 shadow-gold-lg transition-all hover:scale-105"
+              className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-accent text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 shadow-gold-lg transition-all hover:scale-105"
             >
               Enroll Now
             </Button>
@@ -72,14 +72,14 @@ export function Hero() {
               size="lg"
               variant="outline"
               onClick={() => navigate("/contact")}
-              className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground text-lg px-8 py-6 transition-all hover:scale-105"
+              className="w-full sm:w-auto border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 transition-all hover:scale-105"
             >
               Book Free Demo
             </Button>
           </div>
 
           {/* Additional Info */}
-          <p className="text-sm text-foreground/60 animate-fade-in-up stagger-6">
+          <p className="text-xs sm:text-sm text-foreground/60 animate-fade-in-up stagger-6">
             Affiliated with Surobharati Sangeet Kala Kendra, Kolkata
           </p>
         </div>

@@ -1,17 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
+import { getCurrentUser, logout } from "../lib/authStore";
 
 export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState(getCurrentUser());
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    setUser(currentUser);
+  }, [location]);
 
   const navigateAndClose = (path: string) => {
     navigate(path);
     setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleLogout = () => {
+    logout();
+    setUser(null);
+    navigateAndClose("/");
   };
 
   const navItems = [
@@ -20,25 +33,32 @@ export function Navigation() {
     { label: "Courses", path: "/courses" as const },
     { label: "Faculty", path: "/faculty" as const },
     { label: "Gallery", path: "/gallery" as const },
+    { label: "Competitions", path: "/competitions" as const },
     { label: "Certificates", path: "/certificates" as const },
     { label: "Admissions", path: "/admissions" as const },
     { label: "Contact", path: "/contact" as const },
     { label: "Admin", path: "/admin" as const },
+    { label: "Admin: Competitions", path: "/admin/competitions" as const },
   ];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-primary/20">
-      <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <nav className="container mx-auto px-2 sm:px-3 py-2 sm:py-3 flex items-center justify-between">
         {/* Logo */}
         <button 
           onClick={() => navigateAndClose("/")}
-          className="text-2xl font-serif font-bold text-primary hover:text-accent transition-colors"
+          className="flex items-center hover:opacity-80 transition-opacity flex-shrink-0"
+          title="Sur Taal Sangeet Academy"
         >
-          Sur Taal Sangeet Academy
+          <img 
+            src="/image/logo.png" 
+            alt="Sur Taal Sangeet Academy" 
+            className="h-8 sm:h-10 md:h-12 w-auto object-contain"
+          />
         </button>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden lg:flex items-center gap-2 xl:gap-4">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
@@ -48,7 +68,7 @@ export function Navigation() {
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
               className={({ isActive }) =>
-                `text-sm font-medium transition-colors ${
+                `text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
                   isActive ? "text-primary" : "text-foreground/80 hover:text-primary"
                 }`
               }
@@ -56,33 +76,70 @@ export function Navigation() {
               {item.label}
             </NavLink>
           ))}
+
+          {/* Auth Buttons */}
+          {user ? (
+            <div className="flex items-center gap-2 xl:gap-3 border-l border-primary/20 pl-2 xl:pl-4">
+              <button
+                onClick={() => navigateAndClose("/profile")}
+                className="text-xs sm:text-sm font-medium text-primary hover:text-accent transition-colors whitespace-nowrap"
+              >
+                {user.name}
+              </button>
+              <Button
+                onClick={handleLogout}
+                size="sm"
+                variant="outline"
+                className="border-red-500 text-red-500 hover:bg-red-500/10 h-7 text-xs px-2"
+              >
+                <LogOut size={14} />
+              </Button>
+            </div>
+          ) : (
+            <>
+              <Button
+                onClick={() => navigateAndClose("/login")}
+                variant="outline"
+                className="border-primary text-primary hover:bg-primary/10 h-7 text-xs px-2"
+              >
+                Login
+              </Button>
+              <Button
+                onClick={() => navigateAndClose("/signup")}
+                className="bg-primary text-primary-foreground hover:bg-accent shadow-gold h-7 text-xs px-2"
+              >
+                Sign Up
+              </Button>
+            </>
+          )}
+
           <Button 
             onClick={() => navigateAndClose("/admissions")}
-            className="bg-primary text-primary-foreground hover:bg-accent shadow-gold"
+            className="bg-primary text-primary-foreground hover:bg-accent shadow-gold h-7 text-xs px-2"
           >
-            Enroll Now
+            Enroll
           </Button>
         </div>
 
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden text-primary"
+          className="lg:hidden text-primary"
           aria-label="Toggle menu"
         >
-          {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </nav>
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-card border-t border-primary/20">
-          <div className="container mx-auto px-4 py-6 flex flex-col gap-4">
+        <div className="lg:hidden bg-card border-t border-primary/20">
+          <div className="container mx-auto px-3 py-4 flex flex-col gap-3">
             {navItems.map((item) => (
               <button
                 key={item.path}
                 onClick={() => navigateAndClose(item.path)}
-                className={`text-left transition-colors py-2 ${
+                className={`text-left transition-colors py-2 text-sm ${
                   location.pathname === item.path
                     ? "text-primary"
                     : "text-foreground/80 hover:text-primary"
@@ -91,9 +148,48 @@ export function Navigation() {
                 {item.label}
               </button>
             ))}
+
+            {/* Mobile Auth Section */}
+            <div className="border-t border-primary/20 pt-3 mt-3">
+              {user ? (
+                <>
+                  <button
+                    onClick={() => navigateAndClose("/profile")}
+                    className="w-full text-left py-2 text-sm text-primary font-medium"
+                  >
+                    Profile: {user.name}
+                  </button>
+                  <Button
+                    onClick={handleLogout}
+                    size="sm"
+                    variant="outline"
+                    className="w-full border-red-500 text-red-500 hover:bg-red-500/10 mt-2 text-xs"
+                  >
+                    <LogOut size={14} /> Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    onClick={() => navigateAndClose("/login")}
+                    variant="outline"
+                    className="w-full border-primary text-primary hover:bg-primary/10 mb-2 text-xs"
+                  >
+                    Login
+                  </Button>
+                  <Button
+                    onClick={() => navigateAndClose("/signup")}
+                    className="w-full bg-primary text-primary-foreground hover:bg-accent text-xs"
+                  >
+                    Sign Up
+                  </Button>
+                </>
+              )}
+            </div>
+
             <Button 
               onClick={() => navigateAndClose("/admissions")}
-              className="bg-primary text-primary-foreground hover:bg-accent w-full"
+              className="w-full bg-primary text-primary-foreground hover:bg-accent text-xs mt-2"
             >
               Enroll Now
             </Button>

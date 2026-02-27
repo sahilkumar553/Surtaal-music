@@ -11,23 +11,23 @@ export function About({ preview = false }: AboutProps) {
   const navigate = useNavigate();
 
   return (
-    <section id="about" className="py-20 bg-card/30">
+    <section id="about" className="py-12 sm:py-16 md:py-20 bg-card/30">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-in-up">
-          <div className="inline-block p-3 bg-primary/10 rounded-full border border-primary/30 mb-4">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14 md:mb-16 animate-fade-in-up">
+          <div className="inline-block p-2 sm:p-3 bg-primary/10 rounded-full border border-primary/30 mb-3 sm:mb-4">
             <BookOpen className="w-8 h-8 text-primary" />
           </div>
-          <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4 sm:mb-6">
             About <span className="text-primary">Our Academy</span>
           </h2>
-          <div className="h-1 w-24 bg-primary mx-auto mb-8"></div>
+          <div className="h-1 w-16 sm:w-20 md:w-24 bg-primary mx-auto mb-6 sm:mb-8"></div>
         </div>
 
         {/* Main About Content */}
         <div className="max-w-4xl mx-auto mb-16">
           <Card className="bg-card/50 backdrop-blur border-primary/20 shadow-gold">
-            <CardContent className="p-8 md:p-12">
+            <CardContent className="p-5 sm:p-8 md:p-12">
               <p className="text-lg leading-relaxed text-foreground/90 text-center mb-5">
                 Sur Taal Sangeet Academy is a premier music and performing arts institute 
                 established in April 2024 in Durgabari, Gaya. We provide structured 
@@ -57,7 +57,7 @@ export function About({ preview = false }: AboutProps) {
 
         {/* Mission & Vision */}
         {!preview && (
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
           {/* Mission */}
           <Card className="bg-gradient-to-br from-card to-card/50 border-primary/30 shadow-gold hover:shadow-gold-lg transition-all hover:-translate-y-1">
             <CardContent className="p-8">
@@ -65,7 +65,7 @@ export function About({ preview = false }: AboutProps) {
                 <div className="p-3 bg-primary/20 rounded-lg">
                   <Target className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-3xl font-serif font-bold text-primary">Our Mission</h3>
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-primary">Our Mission</h3>
               </div>
               <p className="text-foreground/80 leading-relaxed">
                 Provide high-quality music education that builds confidence, creativity, 
@@ -82,7 +82,7 @@ export function About({ preview = false }: AboutProps) {
                 <div className="p-3 bg-primary/20 rounded-lg">
                   <Eye className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-3xl font-serif font-bold text-primary">Our Vision</h3>
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-primary">Our Vision</h3>
               </div>
               <p className="text-foreground/80 leading-relaxed">
                 To become the most trusted and recognized music academy in Gaya and 

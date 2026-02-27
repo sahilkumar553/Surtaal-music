@@ -26,7 +26,7 @@ export function StudentsPerformance() {
   }, []);
 
   const categories = [
-    { id: "stage", label: "Stage Performances", icon: Video },
+    { id: "stage", label: "Stage Show", icon: Video },
     { id: "competition", label: "Competitions", icon: Award },
     { id: "achievements", label: "Achievements", icon: Award },
   ];

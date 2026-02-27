@@ -93,7 +93,7 @@ export function Contact() {
           {/* Map Placeholder */}
           <div className="w-full h-full">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d226.37765153720784!2d85.0044031491354!3d24.794000775242598!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39f32b838dd528e1%3A0x8026e224dd5ca4f3!2sSur%20Taal%20Sangeet%20Academy!5e0!3m2!1sen!2sin!4v1771859439181!5m2!1sen!2sin"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2153.683142487972!2d85.0036891404449!3d24.793780118249046!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39f32b838dd528e1%3A0x8026e224dd5ca4f3!2sSur%20Taal%20Sangeet%20Academy!5e0!3m2!1sen!2sin!4v1771995905217!5m2!1sen!2sin"
             width="100%"
             height="100%"
             style={{ border: 0 }}
