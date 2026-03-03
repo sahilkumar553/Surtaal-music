@@ -9,15 +9,13 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { loadMediaItems } from "@/lib/mediaStore";
+import { subscribeToMediaItems, type MediaItem } from "@/lib/mediaStore";
 
 const AUTO_PLAY_INTERVAL_MS = 4000;
 
 export function Gallery() {
   const [api, setApi] = useState<CarouselApi | null>(null);
-  const [adminItems, setAdminItems] = useState(() =>
-    loadMediaItems().filter((item) => item.category === "gallery"),
-  );
+  const [adminItems, setAdminItems] = useState<MediaItem[]>([]);
 
   useEffect(() => {
     if (!api) return;
@@ -30,7 +28,11 @@ export function Gallery() {
   }, [api]);
 
   useEffect(() => {
-    setAdminItems(loadMediaItems().filter((item) => item.category === "gallery"));
+    const unsubscribe = subscribeToMediaItems((items) => {
+      setAdminItems(items.filter((item) => item.category === "gallery"));
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const staticItems = [

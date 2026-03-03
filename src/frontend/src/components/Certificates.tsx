@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Award } from "lucide-react";
-import { getCategoryLabel, loadMediaItems } from "@/lib/mediaStore";
+import { getCategoryLabel, subscribeToMediaItems } from "@/lib/mediaStore";
 import { ImageModal } from "@/components/ui/ImageModal";
 
 export function Certificates() {
@@ -13,14 +13,18 @@ export function Certificates() {
   >([]);
 
   useEffect(() => {
-    const mediaItems = loadMediaItems()
-      .filter((item) => item.category === "certificate")
-      .map((item) => ({
-        title: item.title,
-        subtitle: getCategoryLabel(item.category),
-        image: item.imageRef,
-      }));
-    setAdminCertificateItems(mediaItems);
+    const unsubscribe = subscribeToMediaItems((items) => {
+      const mediaItems = items
+        .filter((item) => item.category === "certificate")
+        .map((item) => ({
+          title: item.title,
+          subtitle: getCategoryLabel(item.category),
+          image: item.imageRef,
+        }));
+      setAdminCertificateItems(mediaItems);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const certificateItems = [

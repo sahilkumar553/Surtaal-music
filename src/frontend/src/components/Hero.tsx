@@ -2,15 +2,19 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Music, Sparkles, Megaphone } from "lucide-react";
-import { getUpcomingCompetitions } from "@/lib/competitionStore";
+import { splitCompetitions, subscribeToCompetitions } from "@/lib/competitionStore";
 
 export function Hero() {
   const navigate = useNavigate();
   const [upcomingTitles, setUpcomingTitles] = useState<string[]>([]);
 
   useEffect(() => {
-    const titles = getUpcomingCompetitions().map((event) => event.title);
-    setUpcomingTitles(titles);
+    const unsubscribe = subscribeToCompetitions((events) => {
+      const { upcoming } = splitCompetitions(events);
+      setUpcomingTitles(upcoming.map((event) => event.title));
+    });
+
+    return () => unsubscribe();
   }, []);
 
   return (

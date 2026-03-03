@@ -1,10 +1,22 @@
-export const ADMIN_COMPETITIONS_STORAGE_KEY = "surtaal-admin-competitions";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  Timestamp,
+  type Unsubscribe,
+} from "firebase/firestore";
+import { db } from "./firebase";
 
 export type CompetitionEvent = {
   id: string;
   title: string;
   description: string;
-  eventDate: number; // timestamp
+  eventDate: number;
   imageRef: string;
   googleFormLink?: string;
   createdAt: number;
@@ -13,10 +25,19 @@ export type CompetitionEvent = {
 type StoredCompetitionEvent = Partial<CompetitionEvent> & {
   title?: string;
   description?: string;
-  eventDate?: number;
+  eventDate?: number | Timestamp;
   imageRef?: string;
   googleFormLink?: string;
+  createdAt?: number | Timestamp;
 };
+
+const COLLECTION_NAME = "competitions";
+
+function toMillis(value: unknown): number | null {
+  if (typeof value === "number") return value;
+  if (value instanceof Timestamp) return value.toMillis();
+  return null;
+}
 
 function toCompetitionEvent(
   item: StoredCompetitionEvent,
@@ -25,18 +46,15 @@ function toCompetitionEvent(
   const title = (item.title ?? "").trim();
   const description = (item.description ?? "").trim();
   const imageRef = (item.imageRef ?? "").trim();
-  const eventDate = item.eventDate;
+  const eventDate = toMillis(item.eventDate);
   const googleFormLink = (item.googleFormLink ?? "").trim() || undefined;
 
   if (!title || !description || !imageRef || !eventDate) {
     return null;
   }
 
-  const id =
-    item.id?.trim() ||
-    `competition-${title}-${eventDate}-${index}`;
-  const createdAt =
-    typeof item.createdAt === "number" ? item.createdAt : Date.now();
+  const id = item.id?.trim() || `competition-${title}-${eventDate}-${index}`;
+  const createdAt = toMillis(item.createdAt) ?? Date.now();
 
   return {
     id,
@@ -49,73 +67,70 @@ function toCompetitionEvent(
   };
 }
 
-function saveCompetitions(items: CompetitionEvent[]): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(
-    ADMIN_COMPETITIONS_STORAGE_KEY,
-    JSON.stringify(items),
+export function subscribeToCompetitions(
+  onData: (events: CompetitionEvent[]) => void,
+  onError?: (error: Error) => void,
+): Unsubscribe {
+  const competitionsQuery = query(
+    collection(db, COLLECTION_NAME),
+    orderBy("createdAt", "desc"),
+  );
+
+  return onSnapshot(
+    competitionsQuery,
+    (snapshot) => {
+      const items = snapshot.docs
+        .map((docSnapshot, index) =>
+          toCompetitionEvent(
+            { id: docSnapshot.id, ...docSnapshot.data() },
+            index,
+          ),
+        )
+        .filter((item): item is CompetitionEvent => Boolean(item));
+
+      onData(items);
+    },
+    (error) => {
+      console.error("Failed to load competitions", error);
+      onError?.(error);
+    },
   );
 }
 
-export function loadCompetitions(): CompetitionEvent[] {
-  if (typeof window === "undefined") return [];
-
-  const raw = window.localStorage.getItem(ADMIN_COMPETITIONS_STORAGE_KEY);
-  if (!raw) return [];
-
-  try {
-    const parsed = JSON.parse(raw) as StoredCompetitionEvent[];
-    const cleaned = parsed
-      .map((item, index) => toCompetitionEvent(item, index))
-      .filter((item): item is CompetitionEvent => Boolean(item));
-
-    saveCompetitions(cleaned);
-    return cleaned;
-  } catch {
-    return [];
-  }
-}
-
-export function addCompetition(input: {
+export async function addCompetition(input: {
   title: string;
   description: string;
   eventDate: number;
   imageRef: string;
   googleFormLink?: string;
-}): CompetitionEvent[] {
-  const nextItem: CompetitionEvent = {
-    id: globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`,
+}): Promise<void> {
+  await addDoc(collection(db, COLLECTION_NAME), {
     title: input.title.trim(),
     description: input.description.trim(),
     eventDate: input.eventDate,
     imageRef: input.imageRef.trim(),
-    googleFormLink: input.googleFormLink?.trim() || undefined,
-    createdAt: Date.now(),
-  };
-
-  const items = [nextItem, ...loadCompetitions()];
-  saveCompetitions(items);
-  return items;
+    googleFormLink: input.googleFormLink?.trim() || null,
+    createdAt: serverTimestamp(),
+  });
 }
 
-export function deleteCompetition(eventId: string): CompetitionEvent[] {
-  const items = loadCompetitions().filter((item) => item.id !== eventId);
-  saveCompetitions(items);
-  return items;
+export async function deleteCompetition(eventId: string): Promise<void> {
+  await deleteDoc(doc(db, COLLECTION_NAME, eventId));
 }
 
-export function getUpcomingCompetitions(): CompetitionEvent[] {
+export function splitCompetitions(events: CompetitionEvent[]): {
+  upcoming: CompetitionEvent[];
+  previous: CompetitionEvent[];
+} {
   const now = Date.now();
-  return loadCompetitions()
+  const upcoming = events
     .filter((event) => event.eventDate > now)
     .sort((a, b) => a.eventDate - b.eventDate);
-}
-
-export function getPreviousCompetitions(): CompetitionEvent[] {
-  const now = Date.now();
-  return loadCompetitions()
+  const previous = events
     .filter((event) => event.eventDate <= now)
     .sort((a, b) => b.eventDate - a.eventDate);
+
+  return { upcoming, previous };
 }
 
 export function formatEventDate(timestamp: number): string {

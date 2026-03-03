@@ -10,8 +10,8 @@ import { Trophy, Trash2, Plus } from "lucide-react";
 import {
   addCompetition,
   deleteCompetition,
-  getUpcomingCompetitions,
-  getPreviousCompetitions,
+  splitCompetitions,
+  subscribeToCompetitions,
   formatEventDate,
   type CompetitionEvent,
 } from "@/lib/competitionStore";
@@ -39,15 +39,16 @@ export function AdminCompetitions() {
       return;
     }
 
-    const loadEvents = () => {
-      setUpcomingEvents(getUpcomingCompetitions());
-      setPreviousEvents(getPreviousCompetitions());
-    };
-    loadEvents();
+    const unsubscribe = subscribeToCompetitions((events) => {
+      const { upcoming, previous } = splitCompetitions(events);
+      setUpcomingEvents(upcoming);
+      setPreviousEvents(previous);
+    }, () => {
+      toast.error("Failed to load competitions");
+    });
+
     setIsAuthorized(true);
-    // Refresh every minute to update event status
-    const interval = setInterval(loadEvents, 60000);
-    return () => clearInterval(interval);
+    return () => unsubscribe();
   }, [navigate]);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -103,6 +104,7 @@ export function AdminCompetitions() {
     }
 
     try {
+      setIsSaving(true);
       // Combine date and time
       const [year, month, day] = eventDate.split("-");
       const [hours, minutes] = eventTime.split(":");
@@ -114,16 +116,13 @@ export function AdminCompetitions() {
         parseInt(minutes),
       ).getTime();
 
-      addCompetition({
+      await addCompetition({
         title,
         description,
         eventDate: eventTimestamp,
         imageRef: finalImageRef,
         googleFormLink: googleFormLink.trim() || undefined,
       });
-
-      setUpcomingEvents(getUpcomingCompetitions());
-      setPreviousEvents(getPreviousCompetitions());
       setTitle("");
       setDescription("");
       setEventDate("");
@@ -139,11 +138,9 @@ export function AdminCompetitions() {
     }
   };
 
-  const handleDelete = (eventId: string) => {
+  const handleDelete = async (eventId: string) => {
     try {
-      deleteCompetition(eventId);
-      setUpcomingEvents(getUpcomingCompetitions());
-      setPreviousEvents(getPreviousCompetitions());
+      await deleteCompetition(eventId);
       toast.success("Event deleted successfully");
     } catch {
       toast.error("Failed to delete event");

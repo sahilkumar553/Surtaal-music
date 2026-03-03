@@ -11,7 +11,7 @@ import {
   addMediaItem,
   deleteMediaItem,
   getCategoryLabel,
-  loadMediaItems,
+  subscribeToMediaItems,
   MEDIA_CATEGORY_OPTIONS,
   type MediaCategory,
   type MediaItem,
@@ -37,7 +37,12 @@ export function AdminGallery() {
     }
 
     setIsAuthorized(true);
-    setItems(loadMediaItems());
+
+    const unsubscribe = subscribeToMediaItems(setItems, () => {
+      toast.error("Failed to load gallery items");
+    });
+
+    return () => unsubscribe();
   }, [navigate]);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -49,6 +54,7 @@ export function AdminGallery() {
     }
 
     let finalImageRef = imageRef.trim();
+    setIsSaving(true);
 
     // If a file is selected, upload to Cloudinary first
     if (file) {
@@ -57,12 +63,11 @@ export function AdminGallery() {
 
       if (!cloudName || !uploadPreset) {
         toast.error("Cloudinary is not configured");
+        setIsSaving(false);
         return;
       }
 
       try {
-        setIsSaving(true);
-
         const uploadData = new FormData();
         uploadData.append("file", file);
         uploadData.append("upload_preset", uploadPreset);
@@ -94,8 +99,7 @@ export function AdminGallery() {
     }
 
     try {
-      const nextItems = addMediaItem({ title, category, imageRef: finalImageRef });
-      setItems(nextItems);
+      await addMediaItem({ title, category, imageRef: finalImageRef });
       setTitle("");
       setImageRef("");
       setFile(null);
@@ -107,10 +111,9 @@ export function AdminGallery() {
     }
   };
 
-  const handleDelete = (itemId: string) => {
+  const handleDelete = async (itemId: string) => {
     try {
-      const nextItems = deleteMediaItem(itemId);
-      setItems(nextItems);
+      await deleteMediaItem(itemId);
       toast.success("Image deleted successfully");
     } catch {
       toast.error("Failed to delete image");

@@ -83,7 +83,7 @@ export function Contact() {
                     <h4 className="font-serif font-bold text-lg text-foreground mb-2">Timings</h4>
                     <p className="text-foreground/70">
                       Monday – Saturday<br />
-                      4:00 PM – 8:00 PM
+                      8:00 AM – 5:00 PM
                     </p>
                   </div>
                 </div>

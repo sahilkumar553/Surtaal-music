@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Award, Video, ChevronLeft, ChevronRight } from "lucide-react";
-import { getCategoryLabel, loadMediaItems, type MediaItem } from "@/lib/mediaStore";
+import { getCategoryLabel, subscribeToMediaItems, type MediaItem } from "@/lib/mediaStore";
 
 export function StudentsPerformance() {
     // Video carousel state for student performance videos
@@ -20,10 +20,14 @@ export function StudentsPerformance() {
     const [adminItems, setAdminItems] = useState<MediaItem[]>([]);
 
   useEffect(() => {
-    const mediaItems = loadMediaItems().filter((item) =>
-      ["stage", "competition", "achievement"].includes(item.category),
-    );
-    setAdminItems(mediaItems);
+    const unsubscribe = subscribeToMediaItems((items) => {
+      const mediaItems = items.filter((item) =>
+        ["stage", "competition", "achievement"].includes(item.category),
+      );
+      setAdminItems(mediaItems);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const categories = [

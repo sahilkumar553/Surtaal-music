@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Calendar, Trophy, ExternalLink } from "lucide-react";
 import {
-  getUpcomingCompetitions,
-  getPreviousCompetitions,
+  splitCompetitions,
+  subscribeToCompetitions,
   formatEventDate,
   type CompetitionEvent,
 } from "@/lib/competitionStore";
@@ -15,8 +15,13 @@ export function Competitions() {
   const [previousEvents, setPreviousEvents] = useState<CompetitionEvent[]>([]);
 
   useEffect(() => {
-    setUpcomingEvents(getUpcomingCompetitions());
-    setPreviousEvents(getPreviousCompetitions());
+    const unsubscribe = subscribeToCompetitions((events) => {
+      const { upcoming, previous } = splitCompetitions(events);
+      setUpcomingEvents(upcoming);
+      setPreviousEvents(previous);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   return (

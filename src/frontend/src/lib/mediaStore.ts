@@ -1,4 +1,16 @@
-export const ADMIN_GALLERY_STORAGE_KEY = "surtaal-admin-gallery-items";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  Timestamp,
+  type Unsubscribe,
+} from "firebase/firestore";
+import { db } from "./firebase";
 
 export const MEDIA_CATEGORY_OPTIONS = [
   { value: "gallery", label: "Gallery" },
@@ -22,6 +34,7 @@ type StoredMediaItem = Partial<MediaItem> & {
   title?: string;
   category?: string;
   imageRef?: string;
+  createdAt?: number | Timestamp;
 };
 
 const legacyCategoryMap: Record<string, MediaCategory> = {
@@ -31,6 +44,8 @@ const legacyCategoryMap: Record<string, MediaCategory> = {
   achievements: "achievement",
 };
 
+const COLLECTION_NAME = "mediaItems";
+
 function normalizeCategory(category: string | undefined): MediaCategory {
   if (!category) return "gallery";
   if (category in legacyCategoryMap) {
@@ -38,12 +53,20 @@ function normalizeCategory(category: string | undefined): MediaCategory {
   }
 
   const allowed = MEDIA_CATEGORY_OPTIONS.map((option) => option.value);
-  return allowed.includes(category as MediaCategory) ? (category as MediaCategory) : "gallery";
+  return allowed.includes(category as MediaCategory)
+    ? (category as MediaCategory)
+    : "gallery";
 }
 
 function isVisaImage(item: StoredMediaItem): boolean {
   const text = `${item.title ?? ""} ${item.imageRef ?? ""}`.toLowerCase();
   return text.includes("visa");
+}
+
+function toMillis(value: unknown): number | null {
+  if (typeof value === "number") return value;
+  if (value instanceof Timestamp) return value.toMillis();
+  return null;
 }
 
 function toMediaItem(item: StoredMediaItem, index: number): MediaItem | null {
@@ -56,7 +79,7 @@ function toMediaItem(item: StoredMediaItem, index: number): MediaItem | null {
 
   const category = normalizeCategory(item.category);
   const id = item.id?.trim() || `${category}-${title}-${imageRef}-${index}`;
-  const createdAt = typeof item.createdAt === "number" ? item.createdAt : Date.now();
+  const createdAt = toMillis(item.createdAt) ?? Date.now();
 
   return {
     id,
@@ -67,53 +90,46 @@ function toMediaItem(item: StoredMediaItem, index: number): MediaItem | null {
   };
 }
 
-function saveMediaItems(items: MediaItem[]): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(ADMIN_GALLERY_STORAGE_KEY, JSON.stringify(items));
+export function subscribeToMediaItems(
+  onData: (items: MediaItem[]) => void,
+  onError?: (error: Error) => void,
+): Unsubscribe {
+  const mediaQuery = query(collection(db, COLLECTION_NAME), orderBy("createdAt", "desc"));
+
+  return onSnapshot(
+    mediaQuery,
+    (snapshot) => {
+      const items = snapshot.docs
+        .map((docSnapshot, index) =>
+          toMediaItem({ id: docSnapshot.id, ...docSnapshot.data() }, index),
+        )
+        .filter((item): item is MediaItem => Boolean(item))
+        .filter((item) => !isVisaImage(item));
+
+      onData(items);
+    },
+    (error) => {
+      console.error("Failed to load media items", error);
+      onError?.(error);
+    },
+  );
 }
 
-export function loadMediaItems(): MediaItem[] {
-  if (typeof window === "undefined") return [];
-
-  const raw = window.localStorage.getItem(ADMIN_GALLERY_STORAGE_KEY);
-  if (!raw) return [];
-
-  try {
-    const parsed = JSON.parse(raw) as StoredMediaItem[];
-    const cleaned = parsed
-      .filter((item) => !isVisaImage(item))
-      .map((item, index) => toMediaItem(item, index))
-      .filter((item): item is MediaItem => Boolean(item));
-
-    saveMediaItems(cleaned);
-    return cleaned;
-  } catch {
-    return [];
-  }
-}
-
-export function addMediaItem(input: {
+export async function addMediaItem(input: {
   title: string;
   category: MediaCategory;
   imageRef: string;
-}): MediaItem[] {
-  const nextItem: MediaItem = {
-    id: globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`,
+}): Promise<void> {
+  await addDoc(collection(db, COLLECTION_NAME), {
     title: input.title.trim(),
     category: input.category,
     imageRef: input.imageRef.trim(),
-    createdAt: Date.now(),
-  };
-
-  const items = [nextItem, ...loadMediaItems()];
-  saveMediaItems(items);
-  return items;
+    createdAt: serverTimestamp(),
+  });
 }
 
-export function deleteMediaItem(itemId: string): MediaItem[] {
-  const items = loadMediaItems().filter((item) => item.id !== itemId);
-  saveMediaItems(items);
-  return items;
+export async function deleteMediaItem(itemId: string): Promise<void> {
+  await deleteDoc(doc(db, COLLECTION_NAME, itemId));
 }
 
 export function getCategoryLabel(category: MediaCategory): string {
