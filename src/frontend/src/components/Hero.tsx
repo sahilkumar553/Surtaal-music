@@ -13,7 +13,7 @@ export function Hero() {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img
-          src="\image\Classic_music.jpg"
+          src="/image/Classic_music.jpg"
           alt="Students performing"
           className="w-full h-full object-cover opacity-40 blur-[-2px] scale-105"
         />

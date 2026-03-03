@@ -199,36 +199,38 @@ export function StudentsPerformance() {
           })}
         </Tabs>
 
-        {/* Video Placeholder */}
-        <div className="max-w-2xl mx-auto mt-16">
+        {/* Video Carousel (responsive) */}
+        <div className="max-w-5xl mx-auto mt-16 px-2 sm:px-4">
           <Card className="bg-card/50 border-primary/20 shadow-gold overflow-hidden">
-            <CardContent className="p-0 relative">
-              <div className="relative w-full max-w-7xl mx-auto" style={{ aspectRatio: '16/9' }}>
-                <button
-                  className="absolute -left-10 top-1/2 -translate-y-1/2 z-20 bg-primary/80 hover:bg-primary text-white rounded-full p-1 shadow-lg transition border border-primary/40"
-                  onClick={handlePrevVideo}
-                  aria-label="Previous video"
-                  style={{ left: 8 }}
-                >
-                  <svg width="48" height="48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="32 44 16 24 32 4"></polyline></svg>
-                </button>
+            <CardContent className="p-0">
+              <div className="relative w-full" style={{ aspectRatio: "16/9" }}>
                 <iframe
-                  className="w-full h-full min-h-[360px] max-h-[85vh] rounded-lg shadow-lg"
+                  className="absolute inset-0 w-full h-full rounded-lg shadow-lg"
                   src={`https://www.youtube.com/embed/${videoIds[currentVideo]}`}
                   title={`Real Student Performance Video ${currentVideo + 1}`}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   referrerPolicy="strict-origin-when-cross-origin"
                   allowFullScreen
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
                 />
-                <button
-                  className="absolute -right-10 top-1/2 -translate-y-1/2 z-20 bg-primary/80 hover:bg-primary text-white rounded-full p-1 shadow-lg transition border border-primary/40"
-                  onClick={handleNextVideo}
-                  aria-label="Next video"
-                  style={{ right: 8 }}
-                >
-                  <svg width="48" height="48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 44 32 24 16 4"></polyline></svg>
-                </button>
+
+                <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 sm:px-4">
+                  <button
+                    type="button"
+                    className="bg-primary/80 hover:bg-primary text-white rounded-full p-2 sm:p-3 shadow-lg transition border border-primary/40"
+                    onClick={handlePrevVideo}
+                    aria-label="Previous video"
+                  >
+                    <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+                  </button>
+                  <button
+                    type="button"
+                    className="bg-primary/80 hover:bg-primary text-white rounded-full p-2 sm:p-3 shadow-lg transition border border-primary/40"
+                    onClick={handleNextVideo}
+                    aria-label="Next video"
+                  >
+                    <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+                  </button>
+                </div>
               </div>
             </CardContent>
           </Card>

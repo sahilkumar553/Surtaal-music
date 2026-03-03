@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Star } from "lucide-react";
+import { Star, StarHalf } from "lucide-react";
 
 export function Testimonials() {
   const testimonials = [
@@ -23,6 +23,31 @@ export function Testimonials() {
       text: "Professional and disciplined environment.",
     },
   ];
+
+  const renderStars = (rating: number) => {
+    const clamped = Math.max(0, Math.min(5, rating));
+    const full = Math.floor(clamped);
+    const hasHalf = clamped - full >= 0.5;
+    const empty = Math.max(0, 5 - full - (hasHalf ? 1 : 0));
+
+    return (
+      <div className="flex gap-1" aria-label={`Rated ${clamped} out of 5`}>
+        {Array.from({ length: full }).map((_, i) => (
+          <Star key={`full-${i}`} className="w-5 h-5 fill-primary text-primary" />
+        ))}
+        {hasHalf && (
+          <StarHalf key="half" className="w-5 h-5 fill-primary text-primary" />
+        )}
+        {Array.from({ length: empty }).map((_, i) => (
+          <Star
+            key={`empty-${i}`}
+            className="w-5 h-5 text-primary/30"
+            strokeWidth={1.5}
+          />
+        ))}
+      </div>
+    );
+  };
 
   return (
     <section id="testimonials" className="py-12 sm:py-16 md:py-20 bg-background">
@@ -64,11 +89,7 @@ export function Testimonials() {
                 </div>
                 
                 {/* Rating Stars */}
-                <div className="flex gap-1">
-                  {Array.from({ length: testimonial.rating }).map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-primary text-primary" />
-                  ))}
-                </div>
+                {renderStars(testimonial.rating)}
               </CardHeader>
               
               <CardContent>

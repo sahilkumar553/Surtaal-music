@@ -1,14 +1,15 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { useEffect, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { Navigation } from "./components/Navigation";
 import { Hero } from "./components/Hero";
 import { About } from "./components/About";
 import { Courses } from "./components/Courses";
 import { Faculty } from "./components/Faculty";
-import { StudentsPerformance } from "./components/StudentsPerformance";
 import { Gallery } from "./components/Gallery";
 import { Certificates } from "./components/Certificates";
 import { Competitions } from "./components/Competitions";
+import { StudentsPerformance } from "./components/StudentsPerformance";
 import { Admissions } from "./components/Admissions";
 import { RegistrationForm } from "./components/RegistrationForm";
 import { Testimonials } from "./components/Testimonials";
@@ -19,6 +20,7 @@ import { WhatsAppFloat } from "./components/WhatsAppFloat";
 import { AdminGallery } from "./components/AdminGallery";
 import { AdminCompetitions } from "./components/AdminCompetitions";
 import { AnalyticsTracker } from "./components/AnalyticsTracker";
+import { getCurrentUser, initializeAuth, isAdmin } from "./lib/authStore";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Profile from "./components/Profile";
@@ -29,6 +31,7 @@ function HomePage() {
       <Hero />
       <About preview />
       <Courses />
+      <StudentsPerformance />
       <Competitions />
       <Gallery />
       <Certificates />
@@ -56,7 +59,21 @@ function ContactPage() {
   );
 }
 
+function RequireAdmin({ children }: { children: ReactNode }) {
+  const user = getCurrentUser();
+
+  if (!user || !isAdmin(user)) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+}
+
 function App() {
+  useEffect(() => {
+    initializeAuth();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <AnalyticsTracker />
@@ -76,15 +93,29 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/admin" element={<AdminGallery />} />
-          <Route path="/admin/competitions" element={<AdminCompetitions />} />
+          <Route
+            path="/admin"
+            element={
+              <RequireAdmin>
+                <AdminGallery />
+              </RequireAdmin>
+            }
+          />
+          <Route
+            path="/admin/competitions"
+            element={
+              <RequireAdmin>
+                <AdminCompetitions />
+              </RequireAdmin>
+            }
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
 
       <Footer />
       <WhatsAppFloat />
-      
+
       <Toaster 
         theme="light" 
         position="bottom-right"

@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Card } from "./ui/card";
-import { login } from "../lib/authStore";
+import { login, sendPasswordReset } from "../lib/authStore";
 import { toast } from "sonner";
 
 export default function Login() {
@@ -45,7 +45,7 @@ export default function Login() {
 
     setLoading(true);
     try {
-      login(formData.email, formData.password);
+      await login(formData.email, formData.password);
       toast.success("Logged in successfully!");
       setTimeout(() => navigate("/"), 1500);
     } catch (error) {
@@ -60,13 +60,26 @@ export default function Login() {
   const handleDemoLogin = async () => {
     setLoading(true);
     try {
-      login("demo@surtaal.com", "demo123456");
+      await login("demo@surtaal.com", "demo123456");
       toast.success("Demo login successful!");
       setTimeout(() => navigate("/"), 1500);
     } catch {
       toast.error("Demo account not found. Please sign up first.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleReset = async () => {
+    if (!formData.email.trim()) {
+      toast.error("Enter your email first");
+      return;
+    }
+    try {
+      await sendPasswordReset(formData.email);
+      toast.success("Password reset email sent.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not send reset email");
     }
   };
 
@@ -114,6 +127,15 @@ export default function Login() {
                   onChange={handleChange}
                   className="bg-background border-primary/30 text-foreground placeholder-foreground/50 focus:border-accent focus:ring-accent"
                 />
+                <div className="text-right">
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className="text-xs text-accent hover:text-accent/80"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
               </div>
 
               <Button

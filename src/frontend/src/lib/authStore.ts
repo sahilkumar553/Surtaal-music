@@ -1,3 +1,14 @@
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+  sendPasswordResetEmail,
+  type User as FirebaseUser,
+} from "firebase/auth";
+import { auth } from "./firebase";
+
 export const AUTH_STORAGE_KEY = "surtaal-auth-user";
 export const ADMIN_EMAIL = "surtaalsangeet9270@gmail.com";
 
@@ -11,15 +22,58 @@ export type User = {
   isAdmin?: boolean;
 };
 
-type StoredUser = Partial<User> & {
-  password?: string;
-};
+let listenerInitialized = false;
 
+function firebaseUserToUser(firebaseUser: FirebaseUser): User {
+  const email = firebaseUser.email ?? "";
+  const createdAt = firebaseUser.metadata?.creationTime
+    ? Date.parse(firebaseUser.metadata.creationTime)
+    : Date.now();
+
+  const user: User = {
+    id: firebaseUser.uid,
+    name:
+      firebaseUser.displayName?.trim() ||
+      email.split("@")[0] ||
+      "Surtaal User",
+    email,
+    createdAt,
+  };
+
+  user.isAdmin = isAdmin(user);
+  return user;
+}
+
+/* =========================
+   INITIALIZE AUTH
+========================= */
+export function initializeAuth(): Promise<User | null> {
+  if (!listenerInitialized && typeof window !== "undefined") {
+    listenerInitialized = true;
+    onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        const user = firebaseUserToUser(firebaseUser);
+        saveUser(user);
+      } else {
+        logout();
+      }
+    });
+  }
+
+  return Promise.resolve(getCurrentUser());
+}
+
+/* =========================
+   SAVE USER
+========================= */
 function saveUser(user: User): void {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
 }
 
+/* =========================
+   GET CURRENT USER
+========================= */
 export function getCurrentUser(): User | null {
   if (typeof window === "undefined") return null;
 
@@ -28,96 +82,73 @@ export function getCurrentUser(): User | null {
 
   try {
     const user = JSON.parse(raw) as User;
-    user.isAdmin = user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+    user.isAdmin = isAdmin(user);
     return user;
   } catch {
     return null;
   }
 }
 
+/* =========================
+   CHECK ADMIN
+========================= */
 export function isAdmin(user: User | null): boolean {
   if (!user) return false;
   return user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
 }
 
-export function signup(input: {
+/* =========================
+   SIGNUP (Firebase)
+========================= */
+export async function signup(input: {
   name: string;
   email: string;
   password: string;
   phone?: string;
   course?: string;
-}): User {
-  // Check if user already exists
-  if (typeof window !== "undefined") {
-    const users = getUsersDatabase();
-    if (users.some((u) => u.email === input.email)) {
-      throw new Error("Email already registered");
-    }
-  }
-
-  const newUser: User = {
-    id: globalThis.crypto?.randomUUID?.() ?? `user-${Date.now()}`,
-    name: input.name.trim(),
-    email: input.email.trim().toLowerCase(),
-    phone: input.phone?.trim(),
-    course: input.course?.trim(),
-    createdAt: Date.now(),
-  };
-
-  // Store in users database (for demo purposes, using localStorage)
-  if (typeof window !== "undefined") {
-    const users = getUsersDatabase();
-    const userWithPassword: StoredUser = { ...newUser, password: input.password };
-    users.push(userWithPassword);
-    window.localStorage.setItem("surtaal-users-db", JSON.stringify(users));
-  }
-
-  saveUser(newUser);
-  return newUser;
-}
-
-export function login(email: string, password: string): User {
-  if (typeof window === "undefined") {
-    throw new Error("Cannot login on server");
-  }
-
-  const users = getUsersDatabase();
-  const user = users.find(
-    (u) => u.email === email.trim().toLowerCase() && u.password === password,
+}): Promise<User> {
+  const cred = await createUserWithEmailAndPassword(
+    auth,
+    input.email.trim().toLowerCase(),
+    input.password,
   );
 
-  if (!user) {
-    throw new Error("Invalid email or password");
+  if (input.name.trim()) {
+    await updateProfile(cred.user, { displayName: input.name.trim() });
   }
 
-  const loggedInUser: User = {
-    id: user.id!,
-    name: user.name!,
-    email: user.email!,
-    phone: user.phone,
-    course: user.course,
-    createdAt: user.createdAt!,
-    isAdmin: user.email!.toLowerCase() === ADMIN_EMAIL.toLowerCase(),
-  };
-
-  saveUser(loggedInUser);
-  return loggedInUser;
+  const user = firebaseUserToUser(cred.user);
+  saveUser(user);
+  return user;
 }
 
+/* =========================
+   LOGIN (Firebase)
+========================= */
+export async function login(email: string, password: string): Promise<User> {
+  const cred = await signInWithEmailAndPassword(
+    auth,
+    email.trim().toLowerCase(),
+    password,
+  );
+
+  const user = firebaseUserToUser(cred.user);
+  saveUser(user);
+  return user;
+}
+
+/* =========================
+   LOGOUT
+========================= */
 export function logout(): void {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(AUTH_STORAGE_KEY);
+  void signOut(auth);
 }
 
-function getUsersDatabase(): StoredUser[] {
-  if (typeof window === "undefined") return [];
-
-  const raw = window.localStorage.getItem("surtaal-users-db");
-  if (!raw) return [];
-
-  try {
-    return JSON.parse(raw) as StoredUser[];
-  } catch {
-    return [];
-  }
+/* =========================
+   RESET PASSWORD
+========================= */
+export async function sendPasswordReset(email: string): Promise<void> {
+  await sendPasswordResetEmail(auth, email.trim().toLowerCase());
 }

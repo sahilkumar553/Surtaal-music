@@ -74,7 +74,7 @@ export default function Signup() {
 
     setLoading(true);
     try {
-      signup({
+      await signup({
         name: formData.name,
         email: formData.email,
         password: formData.password,

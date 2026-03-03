@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,7 @@ import {
   formatEventDate,
   type CompetitionEvent,
 } from "@/lib/competitionStore";
+import { getCurrentUser, isAdmin } from "@/lib/authStore";
 
 export function AdminCompetitions() {
   const [title, setTitle] = useState("");
@@ -26,17 +28,27 @@ export function AdminCompetitions() {
   const [upcomingEvents, setUpcomingEvents] = useState<CompetitionEvent[]>([]);
   const [previousEvents, setPreviousEvents] = useState<CompetitionEvent[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const user = getCurrentUser();
+    if (!user || !isAdmin(user)) {
+      toast.error("Admin access required");
+      navigate("/login", { replace: true });
+      return;
+    }
+
     const loadEvents = () => {
       setUpcomingEvents(getUpcomingCompetitions());
       setPreviousEvents(getPreviousCompetitions());
     };
     loadEvents();
+    setIsAuthorized(true);
     // Refresh every minute to update event status
     const interval = setInterval(loadEvents, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [navigate]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -137,6 +149,10 @@ export function AdminCompetitions() {
       toast.error("Failed to delete event");
     }
   };
+
+  if (!isAuthorized) {
+    return null;
+  }
 
   return (
     <section className="py-24 bg-background min-h-screen">

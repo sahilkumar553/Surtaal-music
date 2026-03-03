@@ -21,10 +21,14 @@ export function Navigation() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleLogout = () => {
-    logout();
-    setUser(null);
-    navigateAndClose("/");
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setUser(null);
+      navigateAndClose("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   const navItems = [

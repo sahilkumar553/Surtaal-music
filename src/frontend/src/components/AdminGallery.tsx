@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,6 +16,7 @@ import {
   type MediaCategory,
   type MediaItem,
 } from "@/lib/mediaStore";
+import { getCurrentUser, isAdmin } from "@/lib/authStore";
 
 export function AdminGallery() {
   const [title, setTitle] = useState("");
@@ -23,10 +25,20 @@ export function AdminGallery() {
   const [file, setFile] = useState<File | null>(null);
   const [items, setItems] = useState<MediaItem[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const user = getCurrentUser();
+    if (!user || !isAdmin(user)) {
+      toast.error("Admin access required");
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    setIsAuthorized(true);
     setItems(loadMediaItems());
-  }, []);
+  }, [navigate]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -104,6 +116,10 @@ export function AdminGallery() {
       toast.error("Failed to delete image");
     }
   };
+
+  if (!isAuthorized) {
+    return null;
+  }
 
   return (
     <section className="py-24 bg-background min-h-screen">
