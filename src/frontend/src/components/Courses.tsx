@@ -1,31 +1,82 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Music } from "lucide-react";
 
-export function Courses() {
-  const courses = [
+type CoursesProps = {
+  showPricing?: boolean;
+};
+
+export function Courses({ showPricing = true }: CoursesProps) {
+  const courseHighlights = [
     {
-      name: "Vocal",
-      image: "https://www.musicclassonline.in/images/img/music13.jpg",
+      title: "Vocal Music",
+      icon: "🎤",
+      description:
+        "Hindustani classical, light classical, devotional, and contemporary styles with expressive technique training.",
     },
     {
-      name: "Tabla",
-      image: "https://i.pinimg.com/736x/66/05/01/660501a5857ed3601bb2a50ba2433bbe.jpg",
+      title: "Tabla",
+      icon: "🪘",
+      description:
+        "Master taals, compositions, accompaniment, and rhythmic control on this quintessential percussion instrument.",
     },
     {
-      name: "Harmonium",
-      image: "https://i.pinimg.com/736x/92/2b/9c/922b9cf3074cd1d2c45f0e392bc391bf.jpg",
+      title: "Harmonium & Keyboard",
+      icon: "🎹",
+      description:
+        "Perfect for accompaniment and solo play—learn scales, chords, progressions, and vocal support beautifully.",
     },
     {
-      name: "Guitar",
-      image: "https://i.pinimg.com/1200x/c7/11/67/c7116760013e63d865fa6ec55a66b324.jpg",
+      title: "Guitar",
+      icon: "🎸",
+      description:
+        "Acoustic and classical paths from basic chords to fingerstyle. Build tone, timing, and confident stage presence.",
     },
     {
-      name: "Keyboard",
-      image: "https://i.pinimg.com/736x/ea/95/0b/ea950b6b4127b3cc9aef5815eaf2a8bb.jpg",
+      title: "All Age Groups",
+      icon: "👨‍👩‍👧",
+      description:
+        "Specialized batches for kids (5+), teens, adults, and seniors—beginner to advanced with personalized attention.",
     },
     {
-      name: "Bollywood Dance",
-      image: "https://thumbs.dreamstime.com/b/indian-bollywood-couple-dancing-vector-dancers-silhouette-cartoon-dancer-people-white-64896102.jpg?w=768",
+      title: "Online & Offline",
+      icon: "💻",
+      description:
+        "Learn in-person at the academy or from home via live online sessions with the same structured curriculum.",
+    },
+  ];
+
+  const plans = [
+    {
+      name: "Beginner",
+      price: "1500",
+      cta: "Start Now",
+      accent: "border-sky-200",
+      features: [
+        "Music lessons",
+        "Personalized lesson plans",
+      ],
+    },
+    {
+      name: "Professional",
+      price: "2000",
+      cta: "Start Now",
+      accent: "border-sky-300",
+      features: [
+        "Comprehensive music education",
+        "Access all courses",
+        "Email support",
+      ],
+    },
+    {
+      name: "Expert",
+      price: "2500",
+      cta: "Contact Us",
+      accent: "border-emerald-300",
+      features: [
+        "Unlimited lesson support",
+        "All instruments & styles",
+        "24/7 dedicated support",
+      ],
     },
   ];
 
@@ -46,53 +97,76 @@ export function Courses() {
           </p>
         </div>
 
-        <div className="mb-8 sm:mb-12">
-          {/* Mobile Horizontal Scroll */}
-          <div className="lg:hidden no-scrollbar overflow-x-auto pb-2">
-            <div className="flex gap-4 sm:gap-6 min-w-min px-4">
-              {courses.map((course, index) => {
-                return (
-                  <Card 
-                    key={index}
-                    style={{ backgroundImage: `url(${course.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-                    className="relative border-primary/20 hover:border-primary/50 shadow-gold hover:shadow-gold-lg transition-all hover:-translate-y-2 group flex-shrink-0 w-72 sm:w-96 h-64 sm:h-80"
-                  >
-                    <CardContent className="relative p-6 sm:p-8 text-center z-10 flex flex-col justify-center h-full">
-                      {/* No category property, so Badge removed */}
-                      <div className="absolute bottom-4 left-0 w-full flex justify-center">
-                        <h4 className="text-lg sm:text-xl font-serif font-bold text-black drop-shadow-md bg-white/80 px-3 py-1 rounded">
-                          {course.name}
-                        </h4>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
+        <div className="mb-12 sm:mb-14">
+          <div className="grid gap-4 sm:gap-6 md:gap-8 md:grid-cols-2 xl:grid-cols-3 max-w-6xl mx-auto">
+            {courseHighlights.map((course) => (
+              <Card
+                key={course.title}
+                className="border-primary/20 bg-card/60 shadow-gold hover:shadow-gold-lg transition-all hover:-translate-y-1"
+              >
+                <CardContent className="p-6 sm:p-7 text-center space-y-3">
+                  <div className="text-4xl" aria-hidden>
+                    {course.icon}
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-serif font-bold text-foreground">
+                    {course.title}
+                  </h3>
+                  <p className="text-sm sm:text-base text-foreground/70 leading-relaxed">
+                    {course.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
+        </div>
 
-          {/* Desktop Grid */}
-          <div className="hidden lg:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 max-w-6xl mx-auto">
-            {courses.map((course, index) => {
-              return (
-                <Card 
-                  key={index}
-                  style={{ backgroundImage: `url(${course.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-                  className="relative border-primary/20 hover:border-primary/50 shadow-gold hover:shadow-gold-lg transition-all hover:-translate-y-2 group h-72 md:h-96"
+        {showPricing && (
+          <div className="mb-12 sm:mb-16">
+            <div className="text-center max-w-3xl mx-auto mb-8">
+              <h3 className="text-2xl sm:text-3xl font-serif font-bold text-foreground mb-3">
+                Affordable tuition rates
+              </h3>
+              <p className="text-foreground/70 text-sm sm:text-base">
+                Transparent monthly plans to match your learning goals.
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:gap-6 md:gap-8 md:grid-cols-3 max-w-6xl mx-auto">
+              {plans.map((plan) => (
+                <Card
+                  key={plan.name}
+                  className={`border-primary/20 shadow-gold-lg hover:shadow-gold transition-all hover:-translate-y-1 ${plan.accent}`}
                 >
-                  <CardContent className="relative p-8 sm:p-10 md:p-12 text-center z-10 flex flex-col justify-center h-full">
-                    {/* No category property, so Badge removed */}
-                    <div className="absolute bottom-8 left-0 w-full flex justify-center">
-                      <h4 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-black drop-shadow-md bg-white/80 px-4 py-2 rounded">
-                        {course.name}
-                      </h4>
+                  <CardContent className="p-6 sm:p-8 flex flex-col h-full">
+                    <div className="mb-6">
+                      <p className="text-lg font-semibold text-foreground/80">{plan.name}</p>
+                      <div className="mt-3 flex items-end gap-1">
+                        <span className="text-4xl sm:text-5xl font-bold text-foreground">{plan.price}.00</span>
+                        <span className="text-foreground/60 text-sm">/ month</span>
+                      </div>
+                      <p className="mt-4 text-foreground/70 text-sm">
+                        Tailored features to support your musical journey at this level.
+                      </p>
+                    </div>
+
+                    <button className="w-full rounded-md bg-primary/10 text-primary font-semibold py-3 hover:bg-primary hover:text-primary-foreground transition">
+                      {plan.cta}
+                    </button>
+
+                    <div className="mt-6 space-y-3 text-foreground/80 text-sm">
+                      {plan.features.map((feature) => (
+                        <div key={feature} className="flex items-center gap-2">
+                          <span className="text-emerald-500">✔</span>
+                          <span>{feature}</span>
+                        </div>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
-              );
-            })}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Certification Note */}
         <div className="max-w-3xl mx-auto">

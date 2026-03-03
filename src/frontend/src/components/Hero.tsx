@@ -1,9 +1,17 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Music, Sparkles } from "lucide-react";
+import { Music, Sparkles, Megaphone } from "lucide-react";
+import { getUpcomingCompetitions } from "@/lib/competitionStore";
 
 export function Hero() {
   const navigate = useNavigate();
+  const [upcomingTitles, setUpcomingTitles] = useState<string[]>([]);
+
+  useEffect(() => {
+    const titles = getUpcomingCompetitions().map((event) => event.title);
+    setUpcomingTitles(titles);
+  }, []);
 
   return (
     <section 
@@ -29,6 +37,34 @@ export function Hero() {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 sm:px-6 py-12 sm:py-20 md:py-24 text-center">
         <div className="max-w-4xl mx-auto space-y-8">
+          {upcomingTitles.length > 0 && (
+            <div className="animate-fade-in-up stagger-1">
+              <div className="relative overflow-hidden rounded-full border border-primary/30 bg-card/70 backdrop-blur">
+                <button
+                  type="button"
+                  onClick={() => navigate("/competitions")}
+                  className="flex w-full items-center gap-3 px-4 py-2 text-sm sm:text-base font-semibold text-primary hover:bg-primary/10 transition"
+                  aria-label="View upcoming competitions"
+                >
+                  <Megaphone className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <div className="relative flex-1 overflow-hidden">
+                    <div
+                      className="flex items-center gap-8 whitespace-nowrap"
+                      style={{ animation: "hero-ticker 18s linear infinite" }}
+                    >
+                      {[...upcomingTitles, ...upcomingTitles].map((title, idx) => (
+                        <span key={`${title}-${idx}`} className="flex items-center gap-2">
+                          <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
+                          <span className="text-foreground/80">{title}</span>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <span className="text-xs sm:text-sm font-semibold text-accent">See details</span>
+                </button>
+              </div>
+            </div>
+          )}
           {/* Decorative Icon */}
           <div className="flex justify-center animate-fade-in-up stagger-1">
             <div className="p-4 bg-primary/10 rounded-full border border-primary/30 shadow-gold">
@@ -87,6 +123,15 @@ export function Hero() {
 
       {/* Bottom Fade */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-10"></div>
+
+      <style>
+        {`
+          @keyframes hero-ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+        `}
+      </style>
     </section>
   );
 }

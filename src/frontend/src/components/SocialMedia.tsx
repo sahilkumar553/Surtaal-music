@@ -1,11 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SiFacebook, SiInstagram, SiYoutube, SiSpotify, SiApplemusic } from "react-icons/si";
 import { Music2 } from "lucide-react";
-import { Icon } from "lucide-react";
+
 
 export function SocialMedia() {
   const academySocials = [
-    { name: "Facebook", icon: SiFacebook, url: "#", color: "hover:text-[#1877F2]" },
     { name: "Instagram", icon: SiInstagram, url: "https://www.instagram.com/surtaalsangeetacademy?igsh=MXBxcGYyZnV4Zmx4aw%3D%3D", color: "hover:text-[#E4405F]" },
     { name: "YouTube", icon: SiYoutube, url: "https://www.youtube.com/@surtaalsangeetacademy", color: "hover:text-[#FF0000]" },
   ];
@@ -13,6 +12,7 @@ export function SocialMedia() {
   const directorSocials = [
     { name: "Spotify", icon: SiSpotify, url: "https://open.spotify.com/artist/0vHg1huhz4Kgku2sJuhh5X?si=lVv6MUbHSiKzoH1Fc8keFQ&referral=labelaffiliate&utm_source=1100lC3a8eao&utm_medium=Indie_Routenote&utm_campaign=labelaffiliate&nd=1&dlsi=31cee96eeca2449a", color: "hover:text-[#1DB954]" },
     { name: "YouTube", icon: SiYoutube, url: "https://www.youtube.com/@official_nilanjanray", color: "hover:text-[#FF0000]" },
+    {name: "JioSaavn", icon: Music2,url: "https://www.jiosaavn.com/artist/nilanjan-ray-albums/cSXsF6GZjvo_?referrer=svn_source%3Dshare&svn_medium=com.whatsapp&utm_source=share&utm_medium=com.whatsapp",color: "hover:text-[#2BC5B4]"},
     { name: "Instagram", icon: SiInstagram, url: "https://www.instagram.com/nilanjanray0/?utm_source=ig_embed&ig_rid=b479c0a1-3b29-487b-9459-ba6fae92779c", color: "hover:text-[#E4405F]" },
     { name: "Facebook", icon: SiFacebook, url: "https://www.facebook.com/nilanjan.roy.773", color: "hover:text-[#1877F2]" },
     {name: "Apple Music", icon:SiApplemusic ,url: "https://music.apple.com/us/artist/nilanjan-ray/1402090277?at=11l65W&ct=push",color: "hover:text-[#FA233B]"}
@@ -21,6 +21,8 @@ export function SocialMedia() {
   const studentsSocials = [
     { name: "YouTube", icon: SiYoutube, url: "https://www.youtube.com/@surtaalsangeetacademy", color: "hover:text-[#FF0000]" },
     { name: "Instagram", icon: SiInstagram, url: "https://www.instagram.com/surtaalsangeetacademy?igsh=MXBxcGYyZnV4Zmx4aw%3D%3D", color: "hover:text-[#E4405F]" },
+    { name: "Spotify", icon: SiSpotify, url: "https://open.spotify.com/artist/7mXil36ag7Mh8yP332sucz?si=qghHX138TIaelUvYEegpVA&nd=1&dlsi=3a6c29002d814446", color: "hover:text-[#1DB954]" }
+
   ];
 
   return (

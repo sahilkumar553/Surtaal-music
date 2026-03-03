@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { SiFacebook, SiInstagram, SiYoutube } from "react-icons/si";
+import { SiGmail ,SiWhatsapp ,SiGoogle, SiInstagram, SiYoutube } from "react-icons/si";
 import { Heart } from "lucide-react";
 
 export function Footer() {
@@ -65,33 +65,62 @@ export function Footer() {
 
         {/* Social Media Icons */}
         <div className="flex items-center justify-center gap-4 sm:gap-6 mb-6 sm:mb-8 pb-6 sm:pb-8 border-b border-primary/20">
+
+        {/* Google */}
+        <a 
+          href="https://www.google.com/search?kgmid=/g/11y7wsjbn8&hl=en-IN&q=Sur+Taal+Sangeet+Academy&shndl=30&source=sh/x/loc/osrp/m5/4&kgs=efba670ad04159e9"
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="p-2 sm:p-3 bg-[#4285F4] rounded-full text-white hover:scale-110 transition-all"
+          aria-label="Google Profile"
+        >
+          <SiGoogle className="w-4 sm:w-5 h-4 sm:h-5" />
+        </a>
+
+        {/* Instagram */}
+        <a 
+          href="https://www.instagram.com/surtaalsangeetacademy"
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="p-2 sm:p-3 rounded-full text-white hover:scale-110 transition-all"
+          style={{
+            background: "radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)"
+          }}
+          aria-label="Instagram"
+        >
+          <SiInstagram className="w-4 sm:w-5 h-4 sm:h-5" />
+        </a>
+
+        {/* YouTube */}
+        <a 
+          href="https://www.youtube.com/@surtaalsangeetacademy"
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="p-2 sm:p-3 bg-[#FF0000] rounded-full text-white hover:scale-110 transition-all"
+          aria-label="YouTube"
+        >
+          <SiYoutube className="w-4 sm:w-5 h-4 sm:h-5" />
+        </a>
+
+        {/* WhatsApp */}
+        <a 
+          href="https://www.whatsapp.com/channel/0029Vaw8nph1t90i0uQL952Q"
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="p-2 sm:p-3 bg-[#25D366] rounded-full text-white hover:scale-110 transition-all"
+          aria-label="WhatsApp Channel"
+        >
+          <SiWhatsapp className="w-4 sm:w-5 h-4 sm:h-5" />
+        </a>
+        {/*Email*/}
           <a 
-            href="" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="p-2 sm:p-3 bg-primary/10 rounded-full border border-primary/30 hover:bg-primary hover:text-primary-foreground transition-all hover:scale-110"
-            aria-label="Facebook"
-          >
-            <SiFacebook className="w-4 sm:w-5 h-4 sm:h-5" />
-          </a>
-          <a 
-            href="https://www.instagram.com/surtaalsangeetacademy?igsh=MXBxcGYyZnV4Zmx4aw%3D%3D" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="p-2 sm:p-3 bg-primary/10 rounded-full border border-primary/30 hover:bg-primary hover:text-primary-foreground transition-all hover:scale-110"
-            aria-label="Instagram"
-          >
-            <SiInstagram className="w-4 sm:w-5 h-4 sm:h-5" />
-          </a>
-          <a 
-            href="https://www.youtube.com/@surtaalsangeetacademy"             target="_blank" 
-            rel="noopener noreferrer"
-            className="p-2 sm:p-3 bg-primary/10 rounded-full border border-primary/30 hover:bg-primary hover:text-primary-foreground transition-all hover:scale-110"
-            aria-label="YouTube"
-          >
-            <SiYoutube className="w-4 sm:w-5 h-4 sm:h-5" />
-          </a>
-        </div>
+          href="mailto:surtaalsangeet9270@gmail.com"
+          className="p-2 sm:p-3 bg-[#EA4335] rounded-full text-white hover:scale-110 transition-all"
+          aria-label="Send Email"
+        >
+          <SiGmail className="w-4 sm:w-5 h-4 sm:h-5" />
+        </a>
+      </div>
 
         {/* Copyright */}
         <div className="text-center text-xs sm:text-sm text-foreground/60">

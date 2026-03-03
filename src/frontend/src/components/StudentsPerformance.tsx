@@ -10,7 +10,8 @@ export function StudentsPerformance() {
       "c2avzJ5OHxA", // https://www.youtube.com/watch?v=c2avzJ5OHxA
       "m315UJflORo", // https://www.youtube.com/watch?v=m315UJflORo
       "t4JHxlMCn-k", // https://www.youtube.com/watch?v=t4JHxlMCn-k
-      "DAZX_Bk8dZc"
+      "DAZX_Bk8dZc",
+      "V9GIqRHk0q8"
     ];
     const [currentVideo, setCurrentVideo] = useState(0);
     const handlePrevVideo = () => setCurrentVideo((prev) => (prev === 0 ? videoIds.length - 1 : prev - 1));

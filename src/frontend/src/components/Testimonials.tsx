@@ -5,22 +5,22 @@ import { Star, StarHalf } from "lucide-react";
 export function Testimonials() {
   const testimonials = [
     {
-      name: "Dr Ram Lakhan",
+      name: "Rajarshi Chatterjee",
       course: "Music Program",
       rating: 5,
-      text: "Best music academy in Gaya!",
+      text: "Music is the medicine of the mind and soul. Best music teaching academy. Homely environment and personal attention to every student by very humble and talented teacher...Nilanjan sir...🙏🙏",
     },
     {
-      name: "Sunil Kumar Gupta",
+      name: "Sarita Kumari",
       course: "Stage Performance",
       rating: 4.5,
-      text: "My child gained confidence and stage presence.",
+      text: "Excellent environment in class....Very good teaching technique",
     },
     {
-      name: "Harsh Modi",
+      name: "Shrawan Rock official",
       course: "Academy Experience",
       rating: 5,
-      text: "Professional and disciplined environment.",
+      text: "Sur taal sangeet academy is Best music academy in bihar ❤",
     },
   ];
 

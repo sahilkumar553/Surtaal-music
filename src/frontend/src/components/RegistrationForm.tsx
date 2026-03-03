@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import emailjs from "@emailjs/browser"; // FIXED import
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,8 +8,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Loader2, Send } from "lucide-react";
+import { getCurrentUser } from "../lib/authStore";
+import { useNavigate } from "react-router-dom";
 
 export function RegistrationForm() {
+  const navigate = useNavigate();
+  const user = useMemo(() => getCurrentUser(), []);
+  useEffect(() => {
+    if (!user) {
+      navigate("/signup", { replace: true });
+    }
+  }, [user, navigate]);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,9 +31,20 @@ export function RegistrationForm() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
+    if (!user) {
+      toast.error("Please sign up or log in before submitting the form");
+      return;
+    }
+
     // Validation
     if (!formData.name || !formData.email || !formData.phone || !formData.courseInterest) {
       toast.error("Please fill in all required fields");
+      return;
+    }
+
+    const phoneDigits = formData.phone.replace(/\D/g, "");
+    if (phoneDigits.length !== 10) {
+      toast.error("Mobile number must be 10 digits");
       return;
     }
 
@@ -134,18 +154,21 @@ export function RegistrationForm() {
                 {/* Phone */}
                 <div className="space-y-2">
                   <Label htmlFor="phone" className="text-foreground">
-                    Phone Number <span className="text-primary">*</span>
+                    Phone Number (10 digits) <span className="text-primary">*</span>
                   </Label>
                   <Input
                     id="phone"
                     name="phone"
                     type="tel"
+                    inputMode="numeric"
+                    pattern="\d{10}"
+                    maxLength={10}
                     required
                     autoComplete="tel"
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/\D/g, "") })}
                     className="bg-background border-primary/30 focus:border-primary text-foreground"
-                    placeholder="+91 XXXXX XXXXX"
+                    placeholder="Enter 10 digit number"
                   />
                 </div>
 
@@ -215,6 +238,24 @@ export function RegistrationForm() {
               </form>
             </CardContent>
           </Card>
+
+          {!user && (
+            <Card className="mt-6 border-primary/30 bg-card/60">
+              <CardContent className="p-6 text-center space-y-3">
+                <p className="text-foreground/80 font-medium">
+                  Please sign up or log in first to complete the admission form.
+                </p>
+                <div className="flex justify-center gap-3 flex-wrap">
+                  <Button onClick={() => navigate("/signup")} className="bg-primary text-primary-foreground hover:bg-accent">
+                    Sign Up
+                  </Button>
+                  <Button variant="outline" onClick={() => navigate("/login")} className="border-primary text-primary hover:bg-primary/10">
+                    Log In
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </section>

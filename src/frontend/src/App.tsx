@@ -13,13 +13,14 @@ import { StudentsPerformance } from "./components/StudentsPerformance";
 import { Admissions } from "./components/Admissions";
 import { RegistrationForm } from "./components/RegistrationForm";
 import { Testimonials } from "./components/Testimonials";
-import { SocialMedia } from "./components/SocialMedia";
 import { Contact } from "./components/Contact";
 import { Footer } from "./components/Footer";
 import { WhatsAppFloat } from "./components/WhatsAppFloat";
 import { AdminGallery } from "./components/AdminGallery";
 import { AdminCompetitions } from "./components/AdminCompetitions";
 import { AnalyticsTracker } from "./components/AnalyticsTracker";
+import { SocialMedia } from "./components/SocialMedia";
+import { ToneBanner } from "./components/ToneBanner";
 import { getCurrentUser, initializeAuth, isAdmin } from "./lib/authStore";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
@@ -30,7 +31,7 @@ function HomePage() {
     <>
       <Hero />
       <About preview />
-      <Courses />
+      <Courses showPricing={false} />
       <StudentsPerformance />
       <Competitions />
       <Gallery />
@@ -50,11 +51,19 @@ function AdmissionsPage() {
   );
 }
 
+function AboutPage() {
+  return (
+    <>
+      <About />
+      <SocialMedia />
+    </>
+  );
+}
+
 function ContactPage() {
   return (
     <>
       <Contact />
-      <SocialMedia />
     </>
   );
 }
@@ -76,13 +85,14 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background">
-      <AnalyticsTracker />
+        <AnalyticsTracker />
+        <ToneBanner />
       <Navigation />
       
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<About />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/faculty" element={<Faculty />} />
           <Route path="/gallery" element={<Gallery />} />

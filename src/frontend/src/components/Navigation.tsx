@@ -63,6 +63,7 @@ export function Navigation() {
             className="h-8 sm:h-10 md:h-12 w-auto object-contain"
           />
         </button>
+        <p>Sur Taal Sangeet Academy</p>
 
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center gap-2 xl:gap-4">
