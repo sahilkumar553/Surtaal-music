@@ -73,7 +73,8 @@ export function About({ preview = false }: AboutProps) {
             <CardContent className="p-5 sm:p-8 md:p-12">
               <p className="text-lg leading-relaxed text-foreground/90 text-center mb-5">
                 Sur Taal Sangeet Academy is a premier music and performing arts
-                institute established in April 2024 in Durgabari, Gaya. We
+                institute established in April 2024 near Sambhu Gharana, Durga
+                Bari, Gaya. We
                 provide structured professional training in music and dance for
                 students aged 5 years and above.
               </p>

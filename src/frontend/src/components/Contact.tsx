@@ -15,7 +15,8 @@ export function Contact() {
           </h2>
           <div className="h-1 w-24 bg-primary mx-auto mb-8"></div>
           <p className="text-lg text-foreground/70">
-            Sur Taal Sangeet Academy, Durgabari, Gaya, Bihar
+            Sur Taal Sangeet Academy, Near Sambhu Gharana, Durga Bari, Gaya,
+            Bihar 823002
           </p>
         </div>
 
@@ -32,8 +33,8 @@ export function Contact() {
                   <div>
                     <h4 className="font-serif font-bold text-lg text-foreground mb-2">Address</h4>
                     <p className="text-foreground/70">
-                      Durgabari, Gaya<br />
-                      Bihar, India
+                      Near Sambhu Gharana<br />
+                      Durga Bari, Gaya, Bihar 823002
                     </p>
                   </div>
                 </div>

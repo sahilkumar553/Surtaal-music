@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +7,7 @@ import { CheckCircle, GraduationCap } from "lucide-react";
 
 export function Admissions() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const highlights = [
     { label: "Age Group", value: "5 Years & Above" },
@@ -13,6 +15,16 @@ export function Admissions() {
     { label: "Batch Size", value: "Small Groups" },
     { label: "Demo Class", value: "Free" },
   ];
+
+  // Smooth-scroll to the registration form when landing on the admissions page with the hash
+  useEffect(() => {
+    if (location.hash === "#registration") {
+      const element = document.getElementById("registration");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [location.hash]);
 
   return (
     <section id="admissions" className="py-12 sm:py-16 md:py-20 bg-card/30">
@@ -78,10 +90,7 @@ export function Admissions() {
                 <Button
                   size="lg"
                   onClick={() => {
-                    const element = document.getElementById("registration");
-                    if (element) {
-                      element.scrollIntoView({ behavior: "smooth" });
-                    }
+                    navigate("/admissions#registration");
                   }}
                   className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-accent text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 shadow-gold-lg"
                 >
