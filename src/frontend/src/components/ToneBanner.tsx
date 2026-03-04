@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 interface ToneBannerProps {
   src?: string;
@@ -13,7 +13,6 @@ export function ToneBanner({
     : `${import.meta.env.BASE_URL}${src.replace(/^\//, "")}`;
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [hidden] = useState(false);
 
   useEffect(() => {
     const audio = new Audio(resolvedSrc);
@@ -39,7 +38,6 @@ export function ToneBanner({
 
   useEffect(() => {
     const handleFirstInteraction = async () => {
-      if (hidden) return;
       const audio = audioRef.current;
       if (!audio) return;
 
@@ -57,9 +55,7 @@ export function ToneBanner({
       window.removeEventListener("pointerdown", handleFirstInteraction);
       window.removeEventListener("keydown", handleFirstInteraction);
     };
-  }, [hidden]);
+  }, []);
 
-  if (hidden) return null;
-
-  return null; // No visible button
+  return null; // No visible UI
 }

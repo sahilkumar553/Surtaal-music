@@ -1,16 +1,4 @@
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-  Timestamp,
-  type Unsubscribe,
-} from "firebase/firestore";
-import { db } from "./firebase";
+import { request, subscribeWithPolling, type Unsubscribe } from "./apiClient";
 
 export type CompetitionEvent = {
   id: string;
@@ -25,17 +13,17 @@ export type CompetitionEvent = {
 type StoredCompetitionEvent = Partial<CompetitionEvent> & {
   title?: string;
   description?: string;
-  eventDate?: number | Timestamp;
+  eventDate?: number;
   imageRef?: string;
   googleFormLink?: string;
-  createdAt?: number | Timestamp;
+  createdAt?: number;
 };
 
-const COLLECTION_NAME = "competitions";
+const COLLECTION_PATH = "/competitions";
+const POLL_INTERVAL_MS = 30000;
 
 function toMillis(value: unknown): number | null {
   if (typeof value === "number") return value;
-  if (value instanceof Timestamp) return value.toMillis();
   return null;
 }
 
@@ -71,30 +59,16 @@ export function subscribeToCompetitions(
   onData: (events: CompetitionEvent[]) => void,
   onError?: (error: Error) => void,
 ): Unsubscribe {
-  const competitionsQuery = query(
-    collection(db, COLLECTION_NAME),
-    orderBy("createdAt", "desc"),
-  );
+  const fetchCompetitions = async (): Promise<CompetitionEvent[]> => {
+    const items = await request<StoredCompetitionEvent[]>(COLLECTION_PATH);
+    return items
+      .map((item, index) => toCompetitionEvent(item, index))
+      .filter((item): item is CompetitionEvent => Boolean(item));
+  };
 
-  return onSnapshot(
-    competitionsQuery,
-    (snapshot) => {
-      const items = snapshot.docs
-        .map((docSnapshot, index) =>
-          toCompetitionEvent(
-            { id: docSnapshot.id, ...docSnapshot.data() },
-            index,
-          ),
-        )
-        .filter((item): item is CompetitionEvent => Boolean(item));
-
-      onData(items);
-    },
-    (error) => {
-      console.error("Failed to load competitions", error);
-      onError?.(error);
-    },
-  );
+  return subscribeWithPolling(fetchCompetitions, onData, onError, {
+    intervalMs: POLL_INTERVAL_MS,
+  });
 }
 
 export async function addCompetition(input: {
@@ -104,18 +78,22 @@ export async function addCompetition(input: {
   imageRef: string;
   googleFormLink?: string;
 }): Promise<void> {
-  await addDoc(collection(db, COLLECTION_NAME), {
-    title: input.title.trim(),
-    description: input.description.trim(),
-    eventDate: input.eventDate,
-    imageRef: input.imageRef.trim(),
-    googleFormLink: input.googleFormLink?.trim() || null,
-    createdAt: serverTimestamp(),
+  await request<CompetitionEvent>(COLLECTION_PATH, {
+    method: "POST",
+    body: JSON.stringify({
+      title: input.title.trim(),
+      description: input.description.trim(),
+      eventDate: input.eventDate,
+      imageRef: input.imageRef.trim(),
+      googleFormLink: input.googleFormLink?.trim(),
+    }),
   });
 }
 
 export async function deleteCompetition(eventId: string): Promise<void> {
-  await deleteDoc(doc(db, COLLECTION_NAME, eventId));
+  await request<void>(`${COLLECTION_PATH}/${eventId}`, {
+    method: "DELETE",
+  });
 }
 
 export function splitCompetitions(events: CompetitionEvent[]): {
@@ -139,13 +117,5 @@ export function formatEventDate(timestamp: number): string {
     year: "numeric",
     month: "short",
     day: "numeric",
-  });
-}
-
-export function formatEventTime(timestamp: number): string {
-  const date = new Date(timestamp);
-  return date.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
   });
 }

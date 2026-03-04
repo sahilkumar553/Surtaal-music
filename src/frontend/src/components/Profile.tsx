@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
-import { getCurrentUser, logout, type User } from "../lib/authStore";
+import { initializeAuth, logout, onAuthUserChanged, type User } from "../lib/authStore";
 import { toast } from "sonner";
 import { LogOut, User as UserIcon } from "lucide-react";
 
@@ -12,13 +12,17 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const currentUser = getCurrentUser();
-    if (!currentUser) {
-      navigate("/login");
-      return;
-    }
-    setUser(currentUser);
-    setLoading(false);
+    // Wait for Firebase to restore the session before deciding
+    const unsub = onAuthUserChanged(() => {});
+    initializeAuth().then((restored) => {
+      if (!restored) {
+        navigate("/login");
+      } else {
+        setUser(restored);
+        setLoading(false);
+      }
+    });
+    return unsub;
   }, [navigate]);
 
   const handleLogout = () => {

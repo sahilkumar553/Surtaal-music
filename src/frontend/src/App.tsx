@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { Navigation } from "./components/Navigation";
 import { Hero } from "./components/Hero";
@@ -21,7 +21,7 @@ import { AdminCompetitions } from "./components/AdminCompetitions";
 import { AnalyticsTracker } from "./components/AnalyticsTracker";
 import { SocialMedia } from "./components/SocialMedia";
 import { ToneBanner } from "./components/ToneBanner";
-import { getCurrentUser, initializeAuth, isAdmin } from "./lib/authStore";
+import { initializeAuth, isAdmin, onAuthUserChanged, type User } from "./lib/authStore";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Profile from "./components/Profile";
@@ -69,7 +69,25 @@ function ContactPage() {
 }
 
 function RequireAdmin({ children }: { children: ReactNode }) {
-  const user = getCurrentUser();
+  const [user, setUser] = useState<User | null>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const unsub = onAuthUserChanged(() => {});
+    initializeAuth().then((restored) => {
+      setUser(restored);
+      setReady(true);
+    });
+    return unsub;
+  }, []);
+
+  if (!ready) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-foreground/70">
+        Loading...
+      </div>
+    );
+  }
 
   if (!user || !isAdmin(user)) {
     return <Navigate to="/login" replace />;

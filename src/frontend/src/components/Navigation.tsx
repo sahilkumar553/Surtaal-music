@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogOut } from "lucide-react";
-import { getCurrentUser, logout } from "../lib/authStore";
+import { getCurrentUser, logout, onAuthUserChanged } from "../lib/authStore";
 
 export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -10,10 +10,10 @@ export function Navigation() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Re-render whenever Firebase auth state changes (including after refresh)
   useEffect(() => {
-    const currentUser = getCurrentUser();
-    setUser(currentUser);
-  }, [location]);
+    return onAuthUserChanged((u) => setUser(u));
+  }, []);
 
   const navigateAndClose = (path: string) => {
     navigate(path);

@@ -1,16 +1,4 @@
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-  Timestamp,
-  type Unsubscribe,
-} from "firebase/firestore";
-import { db } from "./firebase";
+import { request, subscribeWithPolling, type Unsubscribe } from "./apiClient";
 
 export const MEDIA_CATEGORY_OPTIONS = [
   { value: "gallery", label: "Gallery" },
@@ -34,7 +22,7 @@ type StoredMediaItem = Partial<MediaItem> & {
   title?: string;
   category?: string;
   imageRef?: string;
-  createdAt?: number | Timestamp;
+  createdAt?: number;
 };
 
 const legacyCategoryMap: Record<string, MediaCategory> = {
@@ -44,7 +32,8 @@ const legacyCategoryMap: Record<string, MediaCategory> = {
   achievements: "achievement",
 };
 
-const COLLECTION_NAME = "mediaItems";
+const COLLECTION_PATH = "/media";
+const POLL_INTERVAL_MS = 30000;
 
 function normalizeCategory(category: string | undefined): MediaCategory {
   if (!category) return "gallery";
@@ -65,7 +54,6 @@ function isVisaImage(item: StoredMediaItem): boolean {
 
 function toMillis(value: unknown): number | null {
   if (typeof value === "number") return value;
-  if (value instanceof Timestamp) return value.toMillis();
   return null;
 }
 
@@ -94,25 +82,17 @@ export function subscribeToMediaItems(
   onData: (items: MediaItem[]) => void,
   onError?: (error: Error) => void,
 ): Unsubscribe {
-  const mediaQuery = query(collection(db, COLLECTION_NAME), orderBy("createdAt", "desc"));
+  const fetchMedia = async (): Promise<MediaItem[]> => {
+    const items = await request<StoredMediaItem[]>(COLLECTION_PATH);
+    return items
+      .map((item, index) => toMediaItem(item, index))
+      .filter((item): item is MediaItem => Boolean(item))
+      .filter((item) => !isVisaImage(item));
+  };
 
-  return onSnapshot(
-    mediaQuery,
-    (snapshot) => {
-      const items = snapshot.docs
-        .map((docSnapshot, index) =>
-          toMediaItem({ id: docSnapshot.id, ...docSnapshot.data() }, index),
-        )
-        .filter((item): item is MediaItem => Boolean(item))
-        .filter((item) => !isVisaImage(item));
-
-      onData(items);
-    },
-    (error) => {
-      console.error("Failed to load media items", error);
-      onError?.(error);
-    },
-  );
+  return subscribeWithPolling(fetchMedia, onData, onError, {
+    intervalMs: POLL_INTERVAL_MS,
+  });
 }
 
 export async function addMediaItem(input: {
@@ -120,16 +100,20 @@ export async function addMediaItem(input: {
   category: MediaCategory;
   imageRef: string;
 }): Promise<void> {
-  await addDoc(collection(db, COLLECTION_NAME), {
-    title: input.title.trim(),
-    category: input.category,
-    imageRef: input.imageRef.trim(),
-    createdAt: serverTimestamp(),
+  await request<MediaItem>(COLLECTION_PATH, {
+    method: "POST",
+    body: JSON.stringify({
+      title: input.title.trim(),
+      category: input.category,
+      imageRef: input.imageRef.trim(),
+    }),
   });
 }
 
 export async function deleteMediaItem(itemId: string): Promise<void> {
-  await deleteDoc(doc(db, COLLECTION_NAME, itemId));
+  await request<void>(`${COLLECTION_PATH}/${itemId}`, {
+    method: "DELETE",
+  });
 }
 
 export function getCategoryLabel(category: MediaCategory): string {

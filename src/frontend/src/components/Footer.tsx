@@ -7,7 +7,6 @@ import {
   SiInstagram,
   SiYoutube,
 } from "react-icons/si";
-import { Heart } from "lucide-react";
 
 export function Footer() {
   const quickLinks = [
@@ -64,8 +63,8 @@ export function Footer() {
               Contact
             </h4>
             <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-foreground/70">
-              <li>Durgabari, Gaya</li>
-              <li>Bihar, India</li>
+              <li>Near Sambhu Gharana Durga Bari</li>
+              <li>Gaya,Bihar 823002</li>
               <li className="pt-2">+91 76547 67376</li>
               <li>surtaalsangeet9270@gmail.com</li>
             </ul>

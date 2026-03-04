@@ -8,8 +8,8 @@ import {
   type User as FirebaseUser,
 } from "firebase/auth";
 import { auth } from "./firebase";
+import { request } from "./apiClient";
 
-export const AUTH_STORAGE_KEY = "surtaal-auth-user";
 export const ADMIN_EMAIL = "surtaalsangeet9270@gmail.com";
 
 export type User = {
@@ -23,6 +23,33 @@ export type User = {
 };
 
 let listenerInitialized = false;
+let cachedUser: User | null = null;
+let authReadyResolve: ((user: User | null) => void) | null = null;
+const authReady = new Promise<User | null>((resolve) => {
+  authReadyResolve = resolve;
+});
+
+/* =========================
+   AUTH STATE SUBSCRIBERS
+========================= */
+type AuthListener = (user: User | null) => void;
+const authListeners = new Set<AuthListener>();
+
+function notifyListeners() {
+  for (const listener of authListeners) {
+    listener(cachedUser);
+  }
+}
+
+/** Subscribe to auth state changes. Returns an unsubscribe function. */
+export function onAuthUserChanged(listener: AuthListener): () => void {
+  authListeners.add(listener);
+  // Immediately fire with current state so the subscriber is in sync
+  listener(cachedUser);
+  return () => {
+    authListeners.delete(listener);
+  };
+}
 
 function firebaseUserToUser(firebaseUser: FirebaseUser): User {
   const email = firebaseUser.email ?? "";
@@ -44,49 +71,55 @@ function firebaseUserToUser(firebaseUser: FirebaseUser): User {
   return user;
 }
 
+async function syncUserToMongo(user: User): Promise<void> {
+  await request<User>("/users", {
+    method: "POST",
+    body: JSON.stringify(user),
+  });
+}
+
 /* =========================
    INITIALIZE AUTH
 ========================= */
 export function initializeAuth(): Promise<User | null> {
-  if (!listenerInitialized && typeof window !== "undefined") {
+  if (!listenerInitialized) {
     listenerInitialized = true;
     onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
         const user = firebaseUserToUser(firebaseUser);
-        saveUser(user);
+        cachedUser = user;
+        notifyListeners();
+        void syncUserToMongo(user).catch((error) => {
+          console.error("Failed to sync user to MongoDB", error);
+        });
+        authReadyResolve?.(user);
       } else {
-        logout();
+        cachedUser = null;
+        notifyListeners();
+        authReadyResolve?.(null);
       }
     });
   }
 
-  return Promise.resolve(getCurrentUser());
-}
+  const immediate = getCurrentUser();
+  if (immediate) {
+    return Promise.resolve(immediate);
+  }
 
-/* =========================
-   SAVE USER
-========================= */
-function saveUser(user: User): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+  return authReady;
 }
 
 /* =========================
    GET CURRENT USER
 ========================= */
 export function getCurrentUser(): User | null {
-  if (typeof window === "undefined") return null;
-
-  const raw = window.localStorage.getItem(AUTH_STORAGE_KEY);
-  if (!raw) return null;
-
-  try {
-    const user = JSON.parse(raw) as User;
-    user.isAdmin = isAdmin(user);
-    return user;
-  } catch {
-    return null;
+  if (cachedUser) return cachedUser;
+  const current = auth.currentUser;
+  if (current) {
+    cachedUser = firebaseUserToUser(current);
+    return cachedUser;
   }
+  return null;
 }
 
 /* =========================
@@ -118,7 +151,11 @@ export async function signup(input: {
   }
 
   const user = firebaseUserToUser(cred.user);
-  saveUser(user);
+  cachedUser = user;
+  notifyListeners();
+  await syncUserToMongo(user).catch((error) => {
+    console.error("Failed to sync user to MongoDB", error);
+  });
   return user;
 }
 
@@ -133,7 +170,11 @@ export async function login(email: string, password: string): Promise<User> {
   );
 
   const user = firebaseUserToUser(cred.user);
-  saveUser(user);
+  cachedUser = user;
+  notifyListeners();
+  await syncUserToMongo(user).catch((error) => {
+    console.error("Failed to sync user to MongoDB", error);
+  });
   return user;
 }
 
@@ -141,8 +182,8 @@ export async function login(email: string, password: string): Promise<User> {
    LOGOUT
 ========================= */
 export function logout(): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.removeItem(AUTH_STORAGE_KEY);
+  cachedUser = null;
+  notifyListeners();
   void signOut(auth);
 }
 
