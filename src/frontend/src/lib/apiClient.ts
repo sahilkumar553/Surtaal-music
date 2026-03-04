@@ -9,16 +9,19 @@ export const API_BASE_URL = normalizeBaseUrl(import.meta.env.VITE_API_BASE_URL);
 
 async function parseError(response: Response): Promise<string> {
   try {
-    const data = await response.json();
-    if (data && typeof data.message === "string" && data.message.trim()) {
-      return data.message;
+    const text = await response.text();
+    try {
+      const data = JSON.parse(text);
+      if (data && typeof data.message === "string" && data.message.trim()) {
+        return data.message;
+      }
+    } catch {
+      // not JSON
     }
+    return text || `Request failed with status ${response.status}`;
   } catch {
-    // ignore JSON parse errors
+    return `Request failed with status ${response.status}`;
   }
-
-  const text = await response.text();
-  return text || `Request failed with status ${response.status}`;
 }
 
 export async function request<T>(path: string, init?: RequestInit): Promise<T> {

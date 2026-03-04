@@ -1,7 +1,12 @@
 import { connectDB, MediaItem, toMediaItem } from "./_db.js";
 
 export default async function handler(req, res) {
-  await connectDB();
+  try {
+    await connectDB();
+  } catch (error) {
+    console.error("DB connection failed:", error);
+    return res.status(500).json({ message: "Database connection failed" });
+  }
 
   if (req.method === "GET") {
     try {

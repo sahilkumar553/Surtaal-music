@@ -10,6 +10,10 @@ if (!cached) {
 }
 
 export async function connectDB() {
+  if (!MONGODB_URI) {
+    throw new Error("MONGODB_URI environment variable is not set");
+  }
+
   if (cached.conn) return cached.conn;
 
   if (!cached.promise) {
@@ -17,7 +21,13 @@ export async function connectDB() {
     cached.promise = mongoose.connect(MONGODB_URI, { dbName: DB_NAME }).then((m) => m);
   }
 
-  cached.conn = await cached.promise;
+  try {
+    cached.conn = await cached.promise;
+  } catch (error) {
+    // Clear the cached promise so the next invocation retries
+    cached.promise = null;
+    throw error;
+  }
   return cached.conn;
 }
 
