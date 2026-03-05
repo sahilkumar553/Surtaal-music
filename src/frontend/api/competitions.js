@@ -1,5 +1,32 @@
 import { connectDB, Competition, toCompetition } from "./_db.js";
 
+function extractId(req, prefix) {
+  if (req.query && req.query.id) return req.query.id;
+
+  const urlPath = (req.url || "").replace(/\?.*$/, "");
+  const urlMatch = urlPath.match(new RegExp(prefix + "/([a-f0-9]{24})(?:/|$)"));
+  if (urlMatch) return urlMatch[1];
+
+  const routeMatches = req.headers?.["x-now-route-matches"];
+  if (routeMatches) {
+    try {
+      const params = new URLSearchParams(routeMatches);
+      const id = params.get("id") || params.get("1");
+      if (id) return decodeURIComponent(id);
+    } catch {}
+  }
+
+  for (const header of ["x-matched-path", "x-vercel-sc-pathname"]) {
+    const val = req.headers?.[header];
+    if (val) {
+      const m = val.match(new RegExp(prefix + "/([a-f0-9]{24})"));
+      if (m) return m[1];
+    }
+  }
+
+  return null;
+}
+
 export default async function handler(req, res) {
   try {
     await connectDB();
@@ -8,13 +35,14 @@ export default async function handler(req, res) {
     return res.status(500).json({ message: "Database connection failed", detail: error.message });
   }
 
-  // Handle DELETE /api/competitions/:id — Vercel may route here instead of competitions/[id].js
-  const urlSegments = req.url.replace(/\?.*$/, "").split("/").filter(Boolean);
-  const idFromPath = urlSegments.length >= 3 ? urlSegments[urlSegments.length - 1] : null;
+  const id = extractId(req, "/api/competitions");
 
-  if (req.method === "DELETE" && idFromPath) {
+  if (req.method === "DELETE") {
+    if (!id) {
+      return res.status(400).json({ message: "Missing competition ID" });
+    }
     try {
-      const deleted = await Competition.findByIdAndDelete(idFromPath);
+      const deleted = await Competition.findByIdAndDelete(id);
       if (!deleted) {
         return res.status(404).json({ message: "Competition not found" });
       }

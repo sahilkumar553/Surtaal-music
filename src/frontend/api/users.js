@@ -1,11 +1,53 @@
 import { connectDB, User, toUser } from "./_db.js";
 
+function extractId(req, prefix) {
+  if (req.query && req.query.id) return req.query.id;
+
+  const urlPath = (req.url || "").replace(/\?.*$/, "");
+  const urlMatch = urlPath.match(new RegExp(prefix + "/([^/?]+)"));
+  if (urlMatch) return urlMatch[1];
+
+  const routeMatches = req.headers?.["x-now-route-matches"];
+  if (routeMatches) {
+    try {
+      const params = new URLSearchParams(routeMatches);
+      const id = params.get("id") || params.get("1");
+      if (id) return decodeURIComponent(id);
+    } catch {}
+  }
+
+  for (const header of ["x-matched-path", "x-vercel-sc-pathname"]) {
+    const val = req.headers?.[header];
+    if (val) {
+      const m = val.match(new RegExp(prefix + "/([^/?]+)"));
+      if (m) return m[1];
+    }
+  }
+
+  return null;
+}
+
 export default async function handler(req, res) {
   try {
     await connectDB();
   } catch (error) {
     console.error("DB connection failed:", error);
     return res.status(500).json({ message: "Database connection failed", detail: error.message });
+  }
+
+  const id = extractId(req, "/api/users");
+
+  if (req.method === "GET" && id) {
+    try {
+      const doc = await User.findOne({ firebaseUid: id });
+      if (!doc) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      return res.json(toUser(doc));
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Unexpected server error" });
+    }
   }
 
   if (req.method === "POST") {

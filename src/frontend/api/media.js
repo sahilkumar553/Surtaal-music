@@ -1,5 +1,41 @@
 import { connectDB, MediaItem, toMediaItem } from "./_db.js";
 
+/**
+ * Extract a resource ID from the request using every available source.
+ * Vercel may strip the sub-path from req.url when the function file is
+ * `media.js` rather than `media/[id].js`, so we check multiple places.
+ */
+function extractId(req, prefix) {
+  // 1. Vercel dynamic-route query param (media/[id].js populates req.query.id)
+  if (req.query && req.query.id) return req.query.id;
+
+  // 2. Full URL path in req.url
+  const urlPath = (req.url || "").replace(/\?.*$/, "");
+  const urlMatch = urlPath.match(new RegExp(prefix + "/([a-f0-9]{24})(?:/|$)"));
+  if (urlMatch) return urlMatch[1];
+
+  // 3. Vercel sets x-now-route-matches with encoded params
+  const routeMatches = req.headers?.["x-now-route-matches"];
+  if (routeMatches) {
+    try {
+      const params = new URLSearchParams(routeMatches);
+      const id = params.get("id") || params.get("1");
+      if (id) return decodeURIComponent(id);
+    } catch {}
+  }
+
+  // 4. x-vercel-sc-pathname / x-matched-path (internal Vercel headers)
+  for (const header of ["x-matched-path", "x-vercel-sc-pathname"]) {
+    const val = req.headers?.[header];
+    if (val) {
+      const m = val.match(new RegExp(prefix + "/([a-f0-9]{24})"));
+      if (m) return m[1];
+    }
+  }
+
+  return null;
+}
+
 export default async function handler(req, res) {
   try {
     await connectDB();
@@ -8,14 +44,14 @@ export default async function handler(req, res) {
     return res.status(500).json({ message: "Database connection failed", detail: error.message });
   }
 
-  // Handle DELETE /api/media/:id — Vercel may route here instead of media/[id].js
-  const urlSegments = req.url.replace(/\?.*$/, "").split("/").filter(Boolean);
-  // e.g. /api/media/abc123 → ["api", "media", "abc123"]
-  const idFromPath = urlSegments.length >= 3 ? urlSegments[urlSegments.length - 1] : null;
+  const id = extractId(req, "/api/media");
 
-  if (req.method === "DELETE" && idFromPath) {
+  if (req.method === "DELETE") {
+    if (!id) {
+      return res.status(400).json({ message: "Missing media item ID" });
+    }
     try {
-      const deleted = await MediaItem.findByIdAndDelete(idFromPath);
+      const deleted = await MediaItem.findByIdAndDelete(id);
       if (!deleted) {
         return res.status(404).json({ message: "Media item not found" });
       }
