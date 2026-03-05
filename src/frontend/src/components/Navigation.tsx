@@ -105,21 +105,14 @@ export function Navigation() {
 
           {/* Auth Buttons */}
           {user ? (
-            <div className="flex items-center gap-2 xl:gap-3 border-l border-primary/20 pl-2 xl:pl-4">
+            <div className="flex items-center border-l border-primary/20 pl-2 xl:pl-4">
               <button
                 onClick={() => navigateAndClose("/profile")}
-                className="text-xs sm:text-sm font-medium text-primary hover:text-accent transition-colors whitespace-nowrap"
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-sm font-bold hover:bg-accent transition-colors"
+                title={user.name}
               >
-                {user.name}
+                {user.name?.charAt(0).toUpperCase()}
               </button>
-              <Button
-                onClick={handleLogout}
-                size="sm"
-                variant="outline"
-                className="border-red-500 text-red-500 hover:bg-red-500/10 h-7 text-xs px-2"
-              >
-                <LogOut size={14} />
-              </Button>
             </div>
           ) : (
             <>
@@ -189,9 +182,12 @@ export function Navigation() {
                 <>
                   <button
                     onClick={() => navigateAndClose("/profile")}
-                    className="w-full text-left py-2 text-sm text-primary font-medium"
+                    className="flex items-center gap-2 py-2 text-sm text-primary font-medium"
                   >
-                    Profile: {user.name}
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary text-white text-xs font-bold">
+                      {user.name?.charAt(0).toUpperCase()}
+                    </span>
+                    Profile
                   </button>
                   <Button
                     onClick={handleLogout}
