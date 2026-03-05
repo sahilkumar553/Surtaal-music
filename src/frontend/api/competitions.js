@@ -8,6 +8,23 @@ export default async function handler(req, res) {
     return res.status(500).json({ message: "Database connection failed", detail: error.message });
   }
 
+  // Handle DELETE /api/competitions/:id — Vercel may route here instead of competitions/[id].js
+  const urlSegments = req.url.replace(/\?.*$/, "").split("/").filter(Boolean);
+  const idFromPath = urlSegments.length >= 3 ? urlSegments[urlSegments.length - 1] : null;
+
+  if (req.method === "DELETE" && idFromPath) {
+    try {
+      const deleted = await Competition.findByIdAndDelete(idFromPath);
+      if (!deleted) {
+        return res.status(404).json({ message: "Competition not found" });
+      }
+      return res.status(204).send();
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Unexpected server error" });
+    }
+  }
+
   if (req.method === "GET") {
     try {
       const items = await Competition.find().sort({ createdAt: -1 }).lean();

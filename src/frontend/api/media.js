@@ -8,6 +8,24 @@ export default async function handler(req, res) {
     return res.status(500).json({ message: "Database connection failed", detail: error.message });
   }
 
+  // Handle DELETE /api/media/:id — Vercel may route here instead of media/[id].js
+  const urlSegments = req.url.replace(/\?.*$/, "").split("/").filter(Boolean);
+  // e.g. /api/media/abc123 → ["api", "media", "abc123"]
+  const idFromPath = urlSegments.length >= 3 ? urlSegments[urlSegments.length - 1] : null;
+
+  if (req.method === "DELETE" && idFromPath) {
+    try {
+      const deleted = await MediaItem.findByIdAndDelete(idFromPath);
+      if (!deleted) {
+        return res.status(404).json({ message: "Media item not found" });
+      }
+      return res.status(204).send();
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Unexpected server error" });
+    }
+  }
+
   if (req.method === "GET") {
     try {
       const items = await MediaItem.find().sort({ createdAt: -1 }).lean();
