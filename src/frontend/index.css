@@ -163,6 +163,32 @@
     );
   }
   
+  /* Hero ticker (marquee) for announcement banner */
+  @keyframes hero-ticker {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Blink animation for announcement */
+  @keyframes announcement-blink {
+    0%, 100% {
+      opacity: 1;
+      box-shadow: 0 0 8px oklch(var(--primary) / 0.4);
+    }
+    50% {
+      opacity: 0.6;
+      box-shadow: 0 0 20px oklch(var(--primary) / 0.8);
+    }
+  }
+
+  .animate-announcement-blink {
+    animation: announcement-blink 1.5s ease-in-out infinite;
+  }
+
   /* Gold shine animation */
   @keyframes gold-shimmer {
     0%, 100% {

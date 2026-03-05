@@ -43,7 +43,7 @@ export function Hero() {
         <div className="max-w-4xl mx-auto space-y-8">
           {upcomingTitles.length > 0 && (
             <div className="animate-fade-in-up stagger-1">
-              <div className="relative overflow-hidden rounded-full border border-primary/30 bg-card/70 backdrop-blur">
+              <div className="relative overflow-hidden rounded-full border border-primary/30 bg-card/70 backdrop-blur animate-announcement-blink">
                 <button
                   type="button"
                   onClick={() => navigate("/competitions")}
