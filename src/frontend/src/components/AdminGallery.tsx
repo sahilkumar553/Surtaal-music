@@ -112,10 +112,16 @@ export function AdminGallery() {
   };
 
   const handleDelete = async (itemId: string) => {
+    // Optimistically remove from UI immediately
+    const previousItems = items;
+    setItems((prev) => prev.filter((item) => item.id !== itemId));
+
     try {
       await deleteMediaItem(itemId);
       toast.success("Image deleted successfully");
     } catch {
+      // Restore on failure
+      setItems(previousItems);
       toast.error("Failed to delete image");
     }
   };
