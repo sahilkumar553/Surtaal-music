@@ -14,42 +14,42 @@ export function About({ preview = false }: AboutProps) {
     {
       question: "Admission Process",
       answer:
-        "To join the academy, prospective students are required to submit a90-second video without music. Once selected, they can proceed with the formal admission process.",
+        "To join the academy, prospective students are required to submit a 90-second video without music. Once selected, they can proceed with the formal admission process.",
     },
     {
       question: "Program Overview",
       answer:
-        "Our curriculum is designed to provide a balance of classical musictraining and the necessary grooming to become a professionalperformer.Students are enrolled in a 5-year diploma program, with examsconducted annually. Upon completion, a certificate is awarded,which is recognized in both government and private sectors.The institute offers a combination of online and offline classes, with afocus on vocal enhancement and performance skills.",
+        "Our curriculum is designed to provide a balance of classical music training and the necessary grooming to become a professional performer.Students are enrolled in a 5-year diploma program, with exams conducted annually. Upon completion, a certificate is awarded,which is recognized in both government and private sectors.The institute offers a combination of online and offline classes, with afocus on vocal enhancement and performance skills.",
     },
     {
       question: "Admission and Fees",
       answer:
-        "Students are required to have a harmonium and a mobile tanpura to facilitate their learning.",
+        "The initial admission fee is ₹2000, followed by a monthly fee of ₹1500, payable between the 5th and 15th of each month. This entitles students to four classes per month: one online and three offline. Regular assessments are conducted every three months to ensure students are progressing in their vocal training. Students must pass quarterly tests to continue their enrollment, as the academy's focus is on developing professional singers, not merely increasing the student count.",
     },
     {
       question: "Essential Equipment Required",
       answer:
-        "Mobile phones are strictly prohibited during class sessions. Punctuality is crucial, and students are expected to arrive on time for every class.Students must maintain two separate diaries: one for classical music notes and another for song guidelines.Participation in events and performances is mandatory if nominated by the academy.",
+        "Students are required to have a harmonium and a mobile tanpura to facilitate their learning.",
     },
     {
       question: "Rules and Regulations",
       answer:
-        "Regular attendance, disciplined behavior, timely fee payment, and adherence to practice plans are mandatory for all students.",
+        "Mobile phones are strictly prohibited during class sessions.Punctuality is crucial, and students are expected to arrive on time for every class.Students must maintain two separate diaries: one for classical music notes and another for song guidelines.Participation in events and performances is mandatory if nominated by the academy.",
     },
     {
       question: "Additional Opportunities",
       answer:
-        "Students get performance slots in recitals, workshops, and events. Uniform and travel costs for events are borne by students.",
+        "As students progress, the academy may recommend them for cover songs or new compositions,further enhancing their exposure and performance experience.",
     },
     {
       question: "Registration Policy",
       answer:
-        "Registration details are reviewed by our team. Admission is confirmed once fees are paid and the batch schedule is assigned.",
+        "We offer One Free Offline Demo Class . Students must pay after demo class and register in our Institute.",
     },
     {
       question: "Contacting Administration",
       answer:
-        "Reach us at surtaalsangeet9270@gmail.com or +91 76547 67376 for any admission or scheduling queries.",
+        "You can reach our support team by emailing surtaalsangeet9270@gmail.com, calling +917654767376, or using the live chat on our website. Our dedicated team is available 24/7 to assist with any inquiries or issues.We're committed to providing prompt and effective solutions to ensure your musicalsatisfaction.",
     },
   ];
 
@@ -74,9 +74,8 @@ export function About({ preview = false }: AboutProps) {
               <p className="text-lg leading-relaxed text-foreground/90 text-center mb-5">
                 Sur Taal Sangeet Academy is a premier music and performing arts
                 institute established in April 2024 near Sambhu Gharana, Durga
-                Bari, Gaya. We
-                provide structured professional training in music and dance for
-                students aged 5 years and above.
+                Bari, Gaya. We provide structured professional training in music
+                and dance for students aged 5 years and above.
               </p>
               <p className="text-lg leading-relaxed text-foreground/90 text-center mb-5">
                 Our courses include Vocal, Tabla, Harmonium, Guitar, Keyboard,
