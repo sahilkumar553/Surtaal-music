@@ -38,7 +38,7 @@ function EventModal({
           <img
             src={event.imageRef}
             alt={event.title}
-            className="w-full rounded-t-xl object-cover max-h-[50vh]"
+            className="w-full rounded-t-xl object-contain"
           />
           <div className="absolute bottom-3 left-4 right-4">
             <div className="inline-flex items-center gap-2 bg-accent/90 text-accent-foreground px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
