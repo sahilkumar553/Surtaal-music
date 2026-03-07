@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Calendar, Trophy, ExternalLink } from "lucide-react";
+import { Calendar, Trophy, ExternalLink, X } from "lucide-react";
 import {
   splitCompetitions,
   subscribeToCompetitions,
@@ -10,9 +10,76 @@ import {
   type CompetitionEvent,
 } from "@/lib/competitionStore";
 
+function EventModal({
+  event,
+  onClose,
+}: {
+  event: CompetitionEvent | null;
+  onClose: () => void;
+}) {
+  if (!event) return null;
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 overflow-auto p-4"
+      onClick={onClose}
+    >
+      <div
+        className="relative bg-card rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          className="absolute top-3 right-3 z-10 text-white bg-black/60 rounded-full p-2 hover:bg-black/80 transition"
+          onClick={onClose}
+          aria-label="Close"
+        >
+          <X className="w-5 h-5" />
+        </button>
+        <div className="relative">
+          <img
+            src={event.imageRef}
+            alt={event.title}
+            className="w-full rounded-t-xl object-cover max-h-[50vh]"
+          />
+          <div className="absolute bottom-3 left-4 right-4">
+            <div className="inline-flex items-center gap-2 bg-accent/90 text-accent-foreground px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
+              <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
+              {formatEventDate(event.eventDate)}
+            </div>
+          </div>
+        </div>
+        <div className="p-5 sm:p-6">
+          <h3 className="text-xl sm:text-2xl font-serif font-bold text-foreground mb-3">
+            {event.title}
+          </h3>
+          <p className="text-sm sm:text-base text-foreground/80 whitespace-pre-line leading-relaxed">
+            {event.description}
+          </p>
+          {event.googleFormLink && (
+            <Button
+              asChild
+              className="mt-5 w-full bg-accent text-accent-foreground hover:bg-accent/90 text-sm"
+            >
+              <a
+                href={event.googleFormLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2"
+              >
+                <span>Register Now</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Competitions() {
   const [upcomingEvents, setUpcomingEvents] = useState<CompetitionEvent[]>([]);
   const [previousEvents, setPreviousEvents] = useState<CompetitionEvent[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<CompetitionEvent | null>(null);
 
   useEffect(() => {
     const unsubscribe = subscribeToCompetitions((events) => {
@@ -41,6 +108,8 @@ export function Competitions() {
           </p>
         </div>
 
+        <EventModal event={selectedEvent} onClose={() => setSelectedEvent(null)} />
+
         {/* Tabs for Upcoming and Previous */}
         <div className="max-w-5xl mx-auto">
           <Tabs defaultValue="upcoming" className="w-full">
@@ -68,7 +137,8 @@ export function Competitions() {
                   {upcomingEvents.map((event) => (
                     <Card
                       key={event.id}
-                      className="bg-card/50 border-primary/20 shadow-lg hover:shadow-lg transition-all hover:-translate-y-1 overflow-hidden group"
+                      className="bg-card/50 border-primary/20 shadow-lg hover:shadow-lg transition-all hover:-translate-y-1 overflow-hidden group cursor-pointer"
+                      onClick={() => setSelectedEvent(event)}
                     >
                       <div className="relative overflow-hidden aspect-video">
                         <img
@@ -91,6 +161,11 @@ export function Competitions() {
                         <p className="text-xs sm:text-sm text-foreground/70 line-clamp-2">
                           {event.description}
                         </p>
+                        {event.description.length > 100 && (
+                          <span className="text-xs text-primary font-semibold mt-1 inline-block hover:underline">
+                            View More
+                          </span>
+                        )}
                         <div className="mt-4 flex flex-col gap-3">
                           <span className="inline-block bg-primary/20 text-primary px-3 py-1 rounded-full text-xs font-semibold w-fit">
                             Upcoming
@@ -99,6 +174,7 @@ export function Competitions() {
                             <Button
                               asChild
                               className="w-full bg-accent text-accent-foreground hover:bg-accent/90 text-xs sm:text-sm"
+                              onClick={(e: React.MouseEvent) => e.stopPropagation()}
                             >
                               <a
                                 href={event.googleFormLink}
@@ -131,7 +207,8 @@ export function Competitions() {
                   {previousEvents.map((event) => (
                     <Card
                       key={event.id}
-                      className="bg-card/50 border-primary/20 shadow-lg hover:shadow-lg transition-all hover:-translate-y-1 overflow-hidden group opacity-90"
+                      className="bg-card/50 border-primary/20 shadow-lg hover:shadow-lg transition-all hover:-translate-y-1 overflow-hidden group opacity-90 cursor-pointer"
+                      onClick={() => setSelectedEvent(event)}
                     >
                       <div className="relative overflow-hidden aspect-video">
                         <img
@@ -157,6 +234,11 @@ export function Competitions() {
                         <p className="text-xs sm:text-sm text-foreground/70 line-clamp-2">
                           {event.description}
                         </p>
+                        {event.description.length > 100 && (
+                          <span className="text-xs text-primary font-semibold mt-1 inline-block hover:underline">
+                            View More
+                          </span>
+                        )}
                         <div className="mt-4">
                           <span className="inline-block bg-accent/20 text-accent px-3 py-1 rounded-full text-xs font-semibold">
                             Completed
