@@ -53,6 +53,30 @@ export default async function handler(req, res) {
     }
   }
 
+  if (req.method === "PUT") {
+    if (!id) {
+      return res.status(400).json({ message: "Missing competition ID" });
+    }
+    try {
+      const { description } = req.body ?? {};
+      const update = {};
+      if (typeof description === "string" && description.trim()) {
+        update.description = description.trim();
+      }
+      if (Object.keys(update).length === 0) {
+        return res.status(400).json({ message: "No valid fields to update" });
+      }
+      const updated = await Competition.findByIdAndUpdate(id, update, { new: true });
+      if (!updated) {
+        return res.status(404).json({ message: "Competition not found" });
+      }
+      return res.status(200).json(toCompetition(updated));
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Unexpected server error" });
+    }
+  }
+
   if (req.method === "GET") {
     try {
       const items = await Competition.find().sort({ createdAt: -1 }).lean();
