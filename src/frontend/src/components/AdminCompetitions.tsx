@@ -6,10 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Trophy, Trash2, Plus } from "lucide-react";
+import { Trophy, Trash2, Plus, Pencil, Check, X } from "lucide-react";
 import {
   addCompetition,
   deleteCompetition,
+  updateCompetition,
   splitCompetitions,
   subscribeToCompetitions,
   formatEventDate,
@@ -29,6 +30,8 @@ export function AdminCompetitions() {
   const [previousEvents, setPreviousEvents] = useState<CompetitionEvent[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editDescription, setEditDescription] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -144,6 +147,21 @@ export function AdminCompetitions() {
       toast.success("Event deleted successfully");
     } catch {
       toast.error("Failed to delete event");
+    }
+  };
+
+  const handleEditStart = (event: CompetitionEvent) => {
+    setEditingId(event.id);
+    setEditDescription(event.description);
+  };
+
+  const handleEditSave = async (eventId: string) => {
+    try {
+      await updateCompetition(eventId, { description: editDescription });
+      setEditingId(null);
+      toast.success("Description updated successfully");
+    } catch {
+      toast.error("Failed to update description");
     }
   };
 
@@ -285,23 +303,51 @@ export function AdminCompetitions() {
                       <p className="text-sm text-foreground/70 mb-2">
                         {formatEventDate(event.eventDate)}
                       </p>
-                      <p className="text-xs text-foreground/60 line-clamp-2">
-                        {event.description}
-                      </p>
+                      {editingId === event.id ? (
+                        <div className="space-y-2">
+                          <Textarea
+                            value={editDescription}
+                            onChange={(e) => setEditDescription(e.target.value)}
+                            className="text-xs min-h-20"
+                          />
+                          <div className="flex gap-2">
+                            <Button size="sm" onClick={() => handleEditSave(event.id)} className="bg-primary text-primary-foreground">
+                              <Check className="w-3 h-3 mr-1" /> Save
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setEditingId(null)}>
+                              <X className="w-3 h-3 mr-1" /> Cancel
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-xs text-foreground/60 line-clamp-2">
+                          {event.description}
+                        </p>
+                      )}
                       {event.googleFormLink && (
                         <p className="text-xs text-accent mt-2">
                           📝 Google Form: {event.googleFormLink.substring(0, 30)}...
                         </p>
                       )}
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDelete(event.id)}
-                      className="text-destructive hover:bg-destructive/10"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditStart(event)}
+                        className="text-primary hover:bg-primary/10"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDelete(event.id)}
+                        className="text-destructive hover:bg-destructive/10"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -334,23 +380,51 @@ export function AdminCompetitions() {
                       <p className="text-sm text-foreground/70 mb-2">
                         {formatEventDate(event.eventDate)}
                       </p>
-                      <p className="text-xs text-foreground/60 line-clamp-2">
-                        {event.description}
-                      </p>
+                      {editingId === event.id ? (
+                        <div className="space-y-2">
+                          <Textarea
+                            value={editDescription}
+                            onChange={(e) => setEditDescription(e.target.value)}
+                            className="text-xs min-h-20"
+                          />
+                          <div className="flex gap-2">
+                            <Button size="sm" onClick={() => handleEditSave(event.id)} className="bg-primary text-primary-foreground">
+                              <Check className="w-3 h-3 mr-1" /> Save
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setEditingId(null)}>
+                              <X className="w-3 h-3 mr-1" /> Cancel
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-xs text-foreground/60 line-clamp-2">
+                          {event.description}
+                        </p>
+                      )}
                       {event.googleFormLink && (
                         <p className="text-xs text-accent mt-2">
                           📝 Google Form: {event.googleFormLink.substring(0, 30)}...
                         </p>
                       )}
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDelete(event.id)}
-                      className="text-destructive hover:bg-destructive/10"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditStart(event)}
+                        className="text-primary hover:bg-primary/10"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDelete(event.id)}
+                        className="text-destructive hover:bg-destructive/10"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>

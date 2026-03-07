@@ -96,6 +96,16 @@ export async function deleteCompetition(eventId: string): Promise<void> {
   });
 }
 
+export async function updateCompetition(
+  eventId: string,
+  input: { description: string },
+): Promise<void> {
+  await request<CompetitionEvent>(`${COLLECTION_PATH}/${eventId}`, {
+    method: "PUT",
+    body: JSON.stringify({ description: input.description.trim() }),
+  });
+}
+
 export function splitCompetitions(events: CompetitionEvent[]): {
   upcoming: CompetitionEvent[];
   previous: CompetitionEvent[];

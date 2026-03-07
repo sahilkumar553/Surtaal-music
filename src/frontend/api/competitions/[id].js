@@ -23,5 +23,18 @@ export default async function handler(req, res) {
     }
   }
 
+  if (req.method === "PUT") {
+    try {
+      const updated = await Competition.findByIdAndUpdate(id, req.body, { new: true });
+      if (!updated) {
+        return res.status(404).json({ message: "Competition not found" });
+      }
+      return res.status(200).json(updated);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Unexpected server error" });
+    }
+  }
+
   return res.status(405).json({ message: "Method not allowed" });
 }
