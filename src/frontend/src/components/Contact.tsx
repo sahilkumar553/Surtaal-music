@@ -50,7 +50,8 @@ export function Contact() {
                   <div>
                     <h4 className="font-serif font-bold text-lg text-foreground mb-2">Phone</h4>
                     <p className="text-foreground/70">
-                    7654767376
+                   +91 7654767376
+                   +91 6206248334
                     </p>
                   </div>
                 </div>
